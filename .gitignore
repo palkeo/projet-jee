@@ -1,3 +1,5 @@
+.gradle
+build/
 *.class
 jboss/server/all/deploy/project.ext
 jboss/server/default/deploy/project.ext
