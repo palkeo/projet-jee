@@ -1,7 +1,11 @@
 projet-jee
 ==========
 
-Ressources
+Dependencies
+------------
+* Gradle: available on AUR
+
+Resources
 ----------
 
-* Mise en place d'un projet Spring: http://spring.io/guides/gs/serving-web-content/
+* Setup of a Spring project: http://spring.io/guides/gs/serving-web-content/
