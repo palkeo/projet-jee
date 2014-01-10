@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Liste des utilisateurs</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+
+    <table>
+      <tr>
+	<th>Pseudo</th>
+	<th>Mot de passe chiffré</th>
+	<th>Prénom</th>
+	<th>Nom</th>
+	<th>Admin</th>
+      </tr>
+      <tr th:each="user: ${users}">
+	<td th:text="${user.getLogin()}">hello</td>
+	<td th:text="${user.getEncryptedPassword()}">hella</td>
+	<td th:text="${user.getFirstName()}">helli</td>
+	<td th:text="${user.getLastName()}">hellu</td>
+	<td th:text="${user.isAdmin()}? #{true}: #{false}">helle</td>
+      </tr>
+    </table>
+
+  </body>
+</html>
