@@ -8,7 +8,17 @@ header
     background-color: rgba(255, 203, 203, 0.5);
     color: red;
     border: 1px solid red;
-    border-radius: 4px;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.success_message
+{
+    background-color: rgba(203, 203, 255, 0.5);
+    color: green;
+    border: 1px solid green;
+    border-radius: 3px;
     padding: 5px;
     margin: 5px;
 }

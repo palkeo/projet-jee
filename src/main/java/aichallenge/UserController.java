@@ -35,8 +35,6 @@ public class UserController
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
     public String inscriptionResult(@ModelAttribute User user, Model model)
     {
-	model.addAttribute("user", user);
-
 	boolean inscriptionSuccessful = true;
 
 	if(user.getLogin().equals(""))
@@ -61,9 +59,13 @@ public class UserController
 	}
 
 	if(!inscriptionSuccessful)
+        {
+            model.addAttribute("user", user);
 	    return "inscription";
+        }
 
 	repo.save(user);
-	return "inscriptionSuccessful";
+        model.addAttribute("inscriptionSuccessful", true);
+	return "home";
     }
 }
