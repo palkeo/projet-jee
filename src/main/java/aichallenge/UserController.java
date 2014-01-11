@@ -37,14 +37,31 @@ public class UserController
     {
 	model.addAttribute("user", user);
 
-	if(user.getLogin().equals("") ||
-	   user.getFirstName().equals("") ||
-	   user.getLastName().equals("") ||
-	   repo.findByLogin(user.getLogin()) != null)
+	boolean inscriptionSuccessful = true;
+
+	if(user.getLogin().equals(""))
 	{
-	    model.addAttribute("error", "inscription failed");
-	    return "inscription";
+	    model.addAttribute("emptyLogin", true);
+	    inscriptionSuccessful = false;
 	}
+	if(user.getFirstName().equals(""))
+	{
+	    model.addAttribute("emptyFirstName", true);
+	    inscriptionSuccessful = false;
+	}
+	if(user.getLastName().equals(""))
+	{
+	    model.addAttribute("emptyLastName", true);
+	    inscriptionSuccessful = false;
+	}
+	if(repo.findByLogin(user.getLogin()) != null)
+	{
+	    model.addAttribute("loginAlreadyUsed", true);
+	    inscriptionSuccessful = false;
+	}
+
+	if(!inscriptionSuccessful)
+	    return "inscription";
 
 	repo.save(user);
 	return "inscriptionSuccessful";

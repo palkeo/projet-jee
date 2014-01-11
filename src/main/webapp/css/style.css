@@ -2,3 +2,12 @@ header
 {
     background-color: grey;
 }
+
+.error_message
+{
+    background-color: #ffcbcb;
+    color: red;
+    border: 1px solid red;
+    padding: 5px;
+    margin: 5px;
+}
