@@ -10,14 +10,10 @@
     <div th:include="layout :: header"></div>
     <div th:include="layout :: nav"></div>
 
-    <div th:class="*{emptyLogin}? 'error_message' : ''"
-	 th:utext="*{emptyLogin}? 'Le pseudo ne doit pas être vide.&lt;br /&gt;' : ''"></div>
-    <div th:class="*{emptyFirstName}? 'error_message' : ''"
-	 th:utext="*{emptyFirstName}? 'Le prénom ne doit pas être vide.&lt;br /&gt;' : ''"></div>
-    <div th:class="*{emptyLastName}? 'error_message' : ''"
-	 th:utext="*{emptyLastName}? 'Le nom ne doit pas être vide.&lt;br /&gt;' : ''"></div>
-    <div th:class="*{loginAlreadyUsed}? 'error_message' : ''"
-	 th:utext="*{loginAlreadyUsed}? 'Ce pseudo est déjà utilisé.&lt;br /&gt;' : ''"></div>
+    <div class="error_message" th:if="*{emptyLogin}">Le pseudo ne doit pas être vide.</div>
+    <div class="error_message" th:if="*{emptyFirstName}">Le prénom ne doit pas être vide.</div>
+    <div class="error_message" th:if="*{emptyLastName}">Le nom ne doit pas être vide.</div>
+    <div class="error_message" th:if="*{loginAlreadyUsed}">Ce pseudo est déjà utilisé.</div>
 
     <form action="#" th:action="@{/inscription}" th:object="${user}" method="post">
       Pseudo <input type="text" th:field="*{login}" /><br />
