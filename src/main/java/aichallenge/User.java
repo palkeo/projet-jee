@@ -20,7 +20,15 @@ public class User
     private String lastName;
     private boolean admin;
 
-    protected User(){}
+    protected User()
+    {
+	this.login = "";
+	this.encryptedPassword = "";
+	this.firstName = "";
+	this.lastName = "";
+	this.admin = false;
+    }
+
     public User(String login, String password, String firstName, String lastName, boolean admin)
     {
 	this.login = login;
@@ -41,6 +49,12 @@ public class User
     public String getFirstName(){ return this.firstName; }
     public String getLastName(){ return this.lastName; }
     public boolean isAdmin(){ return this.admin; }
+
+    public void setLogin(String login){ this.login = login; }
+    public void setEncryptedPassword(String password){ this.encryptedPassword = md5(password); }
+    public void setFirstName(String firstName){ this.firstName = firstName; }
+    public void setLastName(String lastName){ this.lastName = lastName; }
+    public void setAdmin(boolean admin){ this.admin = admin; }
 
     /* Returns the md5 encryption of s */
     private String md5(String s)

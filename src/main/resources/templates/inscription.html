@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Inscription</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+
+    <div th:include="layout :: header"></div>
+    <div th:include="layout :: nav"></div>
+
+    <form action="#" th:action="@{/inscription}" th:object="${user}" method="post">
+      Pseudo <input type="text" th:field="*{login}" /><br />
+      Mot de passe <input type="password" th:field="*{encryptedPassword}" /><br />
+      Prénom <input type="text" th:field="*{firstName}" /><br />
+      Nom <input type="text" th:field="*{lastName}" /><br />
+      <input type="submit" value="Valider" />
+    </form>
+
+    <div th:include="layout::footer"></div>
+
+  </body>
+</html>

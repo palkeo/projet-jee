@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Inscription effectuée avec succès</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+
+    <div th:include="layout :: header"></div>
+    <div th:include="layout :: nav"></div>
+
+    <p>L'inscription s'est déroulée avec succès, vous pouvez maintenant vous connecter avec le login <span th:text="${user.login}"></span> et le mot de passe que vous avez choisi.</p>
+
+    <div th:include="layout::footer"></div>
+
+  </body>
+</html>
