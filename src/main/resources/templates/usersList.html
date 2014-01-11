@@ -15,11 +15,11 @@
 	<th>Admin</th>
       </tr>
       <tr th:each="user: ${users}">
-	<td th:text="${user.getLogin()}">hello</td>
-	<td th:text="${user.getEncryptedPassword()}">hella</td>
-	<td th:text="${user.getFirstName()}">helli</td>
-	<td th:text="${user.getLastName()}">hellu</td>
-	<td th:text="${user.isAdmin()}? #{true}: #{false}">helle</td>
+	<td th:text="${user.login}">toto</td>
+	<td th:text="${user.encryptedPassword}">qkjshgfkahdgkqdhsgdkhfg</td>
+	<td th:text="${user.firstName}">Toto</td>
+	<td th:text="${user.lastName}">Dupond</td>
+	<td th:text="${user.isAdmin()}? #{true}: #{false}">true</td>
       </tr>
     </table>
 
