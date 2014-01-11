@@ -5,9 +5,10 @@ header
 
 .error_message
 {
-    background-color: #ffcbcb;
+    background-color: rgba(255, 203, 203, 0.5);
     color: red;
     border: 1px solid red;
+    border-radius: 4px;
     padding: 5px;
     margin: 5px;
 }
