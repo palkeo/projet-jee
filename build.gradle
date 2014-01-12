@@ -10,6 +10,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'spring-boot'
+apply plugin: 'war'
 
 jar {
     baseName = 'iachallenge'
@@ -34,4 +35,19 @@ dependencies {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.10'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/frontend/java'
+        }
+        resources {
+            srcDir 'src/frontend/resources'
+        }
+    }
+}
+
+war {
+    from 'src/frontend/webapp'
 }

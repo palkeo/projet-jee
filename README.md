@@ -5,7 +5,7 @@ Running the website
 -------------------
 * Clone the repo
 * Run `gradle build` in the root directory
-* Run `java -jar build/libs/iachallenge-0.0.1.jar`
+* Run `java -jar build/libs/projet-jee.war`
 
 Dependencies
 ------------
