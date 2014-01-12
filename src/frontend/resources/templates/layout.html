@@ -3,26 +3,41 @@
       xmlns:th="http://www.thymeleaf.org">
   <body>
 
-    <div th:fragment="header">
-      <header>
-	<a href="/">IA Challenge</a>
-      </header>
+    <div th:fragment="headers">
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
     </div>
 
-    <div th:fragment="nav">
-      <nav>
-	<ul>
-	  <li><a href="/">Accueil</a></li>
-	  <li><a href="/users/list">Liste des utilisateurs</a></li>
-	  <li><a href="/inscription">Inscription</a></li>
-	</ul>
-      </nav>
+    <div th:fragment="header">
+    <header>
+        <div id="header-logo">
+            IA Challenge
+        </div>
+
+        
+        <form action="#" method="post"><div>
+            <input name="username" id="header-connect-pseudo" placeholder="Pseudo" type="text" />
+            <input name="password" id="header-connect-pass" placeholder="Mot de passe" type="password" />
+            <input value="Connexion" id="header-connect-submit" name="connect" type="submit" />
+            <div><a id="header-inscription" href="#">Inscription</a><a id="header-mdp-oublie" href="#">Mot de passe oublié ?</a></div>
+        </div></form>
+
+        <nav>
+            <ul>
+                <li class="first"><a href="/"><img src="/home.png" alt="" />Accueil</a></li>
+                <li><a href="/rss/"><img src="Feedspot_files/creer-flux.png" alt="" />Pipo</a></li>
+                <li class="last"><a href="http://feedspot.palkeo.com/boom/timeline"><img src="Feedspot_files/boom.png" alt="" />Radar à buzz</a></li>
+            </ul>
+        </nav>
+    </header>
     </div>
 
     <div th:fragment="footer">
-      <footer>
-	<p>&copy; net7</p>
-      </footer>
+    <footer>
+        <div id="footer-liens"><a href="http://www.palkeo.com">palkeo</a><a href="#">maxima</a><a href="http://www.viod.eu">viod</a><a href="http://isocpp.org">mcarton</a></div>
+        <div id="footer-copy">Valide <a href="http://validator.w3.org/check/referer">HTML5</a> et <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>.<br />Ou pas.</div>
+    </footer>
     </div>
 
   </body>

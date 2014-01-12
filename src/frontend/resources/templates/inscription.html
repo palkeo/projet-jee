@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
+    <div th:include="layout :: headers"></div>
     <title>Inscription</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   </head>
   <body>
 
     <div th:include="layout :: header"></div>
-    <div th:include="layout :: nav"></div>
+
+    <div id="grid"><div id="content">
 
     <div class="error_message" th:if="*{emptyLogin}">Le pseudo ne doit pas être vide.</div>
     <div class="error_message" th:if="*{emptyFirstName}">Le prénom ne doit pas être vide.</div>
@@ -22,6 +22,8 @@
       Nom <input type="text" th:field="*{lastName}" /><br />
       <input type="submit" value="Valider" />
     </form>
+
+</div></div>
 
     <div th:include="layout :: footer"></div>
 
