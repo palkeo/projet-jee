@@ -5,7 +5,13 @@ Running the website
 -------------------
 * Clone the repo
 * Run `gradle build` in the root directory
-* Run `java -jar build/libs/projet-jee.war`
+* Run `java -jar src/frontend/build/libs/frontend.war`
+
+Running a worker
+----------------
+* Clone the repo
+* Run `gradle build` in the root directory
+* Run `java -jar src/backend/build/libs/backend.jar`
 
 Dependencies
 ------------
