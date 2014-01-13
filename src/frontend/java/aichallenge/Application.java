@@ -1,7 +1,5 @@
 package aichallenge;
 
-import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.H2;
-
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -21,6 +19,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @EnableAutoConfiguration
 @Configuration
@@ -32,7 +31,14 @@ public class Application
     @Bean
     public DataSource datasource()
     {
-	return new EmbeddedDatabaseBuilder().setType(H2).build();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/aichallenge");
+        dataSource.setUsername("aichallenge");
+        dataSource.setPassword("dudule");
+        return dataSource;
+
+        // return new EmbeddedDatabaseBuilder().setType(H2).build();
     }
 
     @Bean
@@ -52,10 +58,10 @@ public class Application
     public JpaVendorAdapter jpaVendorAdapter()
     {
 	HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-	hibernateJpaVendorAdapter.setShowSql(false);
+	hibernateJpaVendorAdapter.setShowSql(true);
 	hibernateJpaVendorAdapter.setGenerateDdl(true);
-	hibernateJpaVendorAdapter.setDatabase(Database.H2);
-
+	hibernateJpaVendorAdapter.setDatabase(Database.POSTGRESQL);
+        hibernateJpaVendorAdapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQLDialect");
 	return hibernateJpaVendorAdapter;
     }
 

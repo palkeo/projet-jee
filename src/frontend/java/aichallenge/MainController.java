@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class MainController
 {
     @Autowired
-    private UserRepository repo;
+    private PidginRepository repo;
 
     @RequestMapping("/")
     public String home(Model model)
