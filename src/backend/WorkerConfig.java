@@ -1,5 +1,6 @@
 package backend;
 import org.apache.commons.cli.*;
+import java.util.Collection;
 
 public class WorkerConfig
 {
@@ -25,6 +26,7 @@ public class WorkerConfig
         CommandLineParser parser = new BasicParser();
         Options options = new Options();
 
+        // options
         options.addOption("h", "help", false, "Print this message");
         options.addOption(null, "db-url", true, "The database url for JDBC, like jdbc:postgresql://hostname:port/dbname");
         options.addOption(null, "db-login", true, "The database login");
@@ -39,9 +41,21 @@ public class WorkerConfig
             return null;
         }
 
-        System.out.println(args.getOptionValue("db-url"));
+        // required options
+        options.getOption("db-url").setRequired(true);
 
-        return null;
+        // because without that, it doesn't work..
+        Options options2 = new Options();
+        for(Object o : options.getOptions())
+            options2.addOption((Option)o);
+
+        args = parser.parse(options2, argv);
+
+        return new WorkerConfig(
+            args.getOptionValue("db-url"),
+            args.getOptionValue("db-login"),
+            args.getOptionValue("db-password")
+        );
     }
 
     public String getDatabaseUrl()

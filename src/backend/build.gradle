@@ -9,12 +9,14 @@ dependencies {
     compile("commons-cli:commons-cli:1.2")
     compile("org.codehaus.jackson:jackson-core-lgpl:1.9.13")
     compile("org.codehaus.jackson:jackson-mapper-lgpl:1.9.13")
+
+    compile("postgresql:postgresql:9.1-901.jdbc4")
 }
 
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     manifest {
-        attributes("Main-Class": "Worker")
+        attributes("Main-Class": "backend.Worker")
     }
 }
 
