@@ -1,3 +1,4 @@
+package backend;
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
 
