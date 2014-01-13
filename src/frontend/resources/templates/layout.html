@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-  <body>
-
-    <div th:fragment="headers">
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" type="text/css" href="/css/style.css" />
-    </div>
+    <head>
+        <meta th:fragment="charset" charset="utf-8" />
+        <meta th:fragment="viewport" name="viewport" content="width=device-width, initial-scale=1" />
+        <link th:fragment="stylesheet" rel="stylesheet" type="text/css" href="/css/style.css" />
+    </head>
+    <body>
 
     <div th:fragment="header">
     <header>
@@ -15,7 +14,7 @@
             IA Challenge
         </div>
 
-        
+
         <form action="#" method="post"><div>
             <input name="username" id="header-connect-pseudo" placeholder="Pseudo" type="text" />
             <input name="password" id="header-connect-pass" placeholder="Mot de passe" type="password" />
