@@ -33,12 +33,10 @@ public class Application
     {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/aichallenge");
+        dataSource.setUrl("jdbc:postgresql://viod.eu:5432/aichallenge");
         dataSource.setUsername("aichallenge");
         dataSource.setPassword("dudule");
         return dataSource;
-
-        // return new EmbeddedDatabaseBuilder().setType(H2).build();
     }
 
     @Bean
