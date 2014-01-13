@@ -16,6 +16,7 @@ Running a worker
 Dependencies
 ------------
 * Gradle: available on AUR
+* less: lessc package
 
 Resources
 ----------
