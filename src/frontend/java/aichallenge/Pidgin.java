@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class User
+public class Pidgin
 {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -20,7 +20,7 @@ public class User
     private String lastName;
     private boolean admin;
 
-    protected User()
+    protected Pidgin()
     {
 	this.login = "";
 	this.encryptedPassword = "";
@@ -29,7 +29,7 @@ public class User
 	this.admin = false;
     }
 
-    public User(String login, String password, String firstName, String lastName, boolean admin)
+    public Pidgin(String login, String password, String firstName, String lastName, boolean admin)
     {
 	this.login = login;
 	this.encryptedPassword = this.md5(password);
@@ -41,7 +41,7 @@ public class User
     @Override
     public String toString()
     {
-	return "User(" + this.login + ", " + this.encryptedPassword + ", " + this.firstName + ", " + this.lastName + ", " + (this.admin? "admin": "normal user") + ")";
+	return "Pidgin(" + this.login + ", " + this.encryptedPassword + ", " + this.firstName + ", " + this.lastName + ", " + (this.admin? "admin": "normal pidgin") + ")";
     }
 
     public String getLogin(){ return this.login; }

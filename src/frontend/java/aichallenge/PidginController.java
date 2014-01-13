@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Controller
-public class UserController
+public class PidginController
 {
     @Autowired
-    private UserRepository repo;
+    private PidginRepository repo;
 
     @RequestMapping("/users/list")
     public String usersList(Model model)
@@ -28,12 +28,12 @@ public class UserController
     @RequestMapping(value="/inscription", method=RequestMethod.GET)
     public String inscription(Model model)
     {
-	model.addAttribute("user", new User());
+	model.addAttribute("user", new Pidgin());
 	return "inscription";
     }
 
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
-    public String inscriptionResult(@ModelAttribute User user, Model model)
+    public String inscriptionResult(@ModelAttribute Pidgin user, Model model)
     {
 	boolean inscriptionSuccessful = true;
 
