@@ -33,9 +33,10 @@ public class Application
     {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
+        // Hack me ! Please !
         dataSource.setUrl("jdbc:postgresql://viod.eu:5432/aichallenge");
         dataSource.setUsername("aichallenge");
-        dataSource.setPassword("dudule");
+        dataSource.setPassword("dudule"); // that's a cool password :)
         return dataSource;
     }
 

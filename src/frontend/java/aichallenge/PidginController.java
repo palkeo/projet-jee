@@ -45,6 +45,7 @@ public class PidginController
             errorMessages.add("Le pseudo ne doit pas être vide.");
 	    inscriptionSuccessful = false;
 	}
+	// FIXME : that's ugly. Really.
         if(user.getEncryptedPassword().equals("d41d8cd98f00b204e9800998ecf8427e"))
         {
             errorMessages.add("Le mot de passe ne doit pas être vide.");
