@@ -32,6 +32,16 @@
     </header>
     </div>
 
+    <div class="error_messages" th:fragment="error_messages">
+      <div class="error_message" th:each="errorMessage: ${errorMessages}" th:text="${errorMessage}">
+      </div>
+    </div>
+
+    <div class="success_messages" th:fragment="success_messages">
+      <div class="success_message" th:each="successMessage: ${successMessages}" th:text="${successMessage}">
+      </div>
+    </div>
+
     <div th:fragment="footer">
     <footer>
         <div id="footer-liens"><a href="http://www.palkeo.com">palkeo</a><a href="#">maxima</a><a href="http://viod.eu">viod</a><a href="http://isocpp.org">mcarton</a></div>

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.util.ArrayList;
+
 @Controller
 public class PidginController
 {
@@ -36,36 +38,42 @@ public class PidginController
     public String inscriptionResult(@ModelAttribute Pidgin user, Model model)
     {
 	boolean inscriptionSuccessful = true;
+        ArrayList<String> errorMessages = new ArrayList<String>();
 
 	if(user.getLogin().equals(""))
 	{
-	    model.addAttribute("emptyLogin", true);
+            errorMessages.add("Le pseudo ne doit pas être vide.");
 	    inscriptionSuccessful = false;
 	}
 	if(user.getFirstName().equals(""))
 	{
-	    model.addAttribute("emptyFirstName", true);
+            errorMessages.add("Le prénom ne doit pas être vide.");
 	    inscriptionSuccessful = false;
 	}
 	if(user.getLastName().equals(""))
 	{
-	    model.addAttribute("emptyLastName", true);
+            errorMessages.add("Le nom ne doit pas être vide.");
 	    inscriptionSuccessful = false;
 	}
 	if(repo.findByLogin(user.getLogin()) != null)
 	{
-	    model.addAttribute("loginAlreadyUsed", true);
+            errorMessages.add("Ce pseudo est déjà utilisé.");
 	    inscriptionSuccessful = false;
 	}
 
 	if(!inscriptionSuccessful)
         {
             model.addAttribute("user", user);
+	    model.addAttribute("errorMessages", errorMessages);
 	    return "inscription";
         }
 
 	repo.save(user);
-        model.addAttribute("inscriptionSuccessful", true);
+        ArrayList<String> successMessages = new ArrayList<String>();
+        successMessages.add("L'inscription s'est déroulée avec succès. " +
+                            "Vous pouvez dès à présent vous connecter a" +
+                            "vec les identifiants que vous avez choisis.");
+        model.addAttribute("successMessages", successMessages);
 	return "home";
     }
 }

@@ -10,18 +10,17 @@
 
     <div th:include="layout :: header"></div>
 
-    <div id="grid"><div id="content">
+    <div id="grid">
+      <div id="content">
 
-    <div class="success_message" th:if="*{inscriptionSuccessful}">
-      L'inscription s'est déroulée avec succès. Vous pouvez dès à
-      présent vous connecter avec les identifiants que vous avez
-      choisis.
+        <div th:substituteby="layout :: error_messages"></div>
+        <div th:substituteby="layout :: success_messages"></div>
+
+        <h1>Bienvenue sur AI Challenge</h1>
+        <p><em>AI Challenge</em> est un site vous permettant de programmer des intelligences artificielles (des <em>champions</em>) pour des jeux, et de les faire jouer contre d'autres champions.</p>
+
+      </div>
     </div>
-
-    <h1>Bienvenue sur AI Challenge</h1>
-    <p><em>AI Challenge</em> est un site vous permettant de programmer des intelligences artificielles (des <em>champions</em>) pour des jeux, et de les faire jouer contre d'autres champions.</p>
-
-    </div></div>
 
     <div th:include="layout :: footer"></div>
 
