@@ -57,8 +57,7 @@ public class Pidgin
     public void setAdmin(boolean admin){ this.admin = admin; }
 
     /* Returns the md5 encryption of s */
-    // FIXME: Why isn't this static ?
-    private String md5(String s)
+    public static String md5(String s)
     {
 	try
 	{
