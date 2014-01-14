@@ -1,4 +1,3 @@
-
 package aichallenge;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
