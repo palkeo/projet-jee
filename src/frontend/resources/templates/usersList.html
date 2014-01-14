@@ -21,14 +21,14 @@
 	    <th>Mot de passe chiffré</th>
 	    <th>Prénom</th>
 	    <th>Nom</th>
-	    <th>Admin</th>
+	    <th>Rôle</th>
           </tr>
           <tr th:each="user: ${users}">
 	    <td th:text="${user.login}">toto</td>
 	    <td th:text="${user.encryptedPassword}">qkjshgfkahdgkqdhsgdkhfg</td>
 	    <td th:text="${user.firstName}">Toto</td>
 	    <td th:text="${user.lastName}">Dupond</td>
-	    <td th:text="${user.isAdmin()}? #{true}: #{false}">true</td>
+	    <td th:text="${user.isAdmin()}? 'Admin': 'Utilisateur'">true</td>
           </tr>
         </table>
 
