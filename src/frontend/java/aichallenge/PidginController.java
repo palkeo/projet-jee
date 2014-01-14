@@ -1,3 +1,4 @@
+
 package aichallenge;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 
@@ -35,7 +38,7 @@ public class PidginController
     }
 
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
-    public String inscriptionResult(@ModelAttribute Pidgin user, Model model)
+    public String inscriptionResult(@ModelAttribute Pidgin user, Model model, RedirectAttributes redirectAttributes)
     {
 	boolean inscriptionSuccessful = true;
         ArrayList<String> errorMessages = new ArrayList<String>();
@@ -79,7 +82,8 @@ public class PidginController
         successMessages.add("L'inscription s'est déroulée avec succès. " +
                             "Vous pouvez dès à présent vous connecter a" +
                             "vec les identifiants que vous avez choisis.");
-        model.addAttribute("successMessages", successMessages);
-	return "home";
+        redirectAttributes.addFlashAttribute("successMessages", successMessages);
+
+	return "redirect:/";
     }
 }
