@@ -20,6 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 @EnableAutoConfiguration
 @Configuration
@@ -27,6 +28,13 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @EnableJpaRepositories
 public class Application
 {
+    @Bean
+    public ResourceBundleMessageSource messageSource()
+    {
+        ResourceBundleMessageSource ms = new ResourceBundleMessageSource();
+        ms.setBasename("aichallenge/messages.properties");
+        return ms;
+    }
 
     @Bean
     public DataSource datasource()

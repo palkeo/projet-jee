@@ -803,7 +803,8 @@ header nav ul li a {
   text-shadow: 3px 3px 2px #202020;
   text-decoration: none;
 }
-header nav ul li a:hover {
+header nav ul li a:hover,
+header nav ul li a:active {
   color: #94C1FF;
   text-decoration: none;
 }
