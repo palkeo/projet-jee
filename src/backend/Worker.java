@@ -1,13 +1,18 @@
 package backend;
-import java.sql.*;
+
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
+import java.sql.*;
+import javax.jms.*;
+import org.apache.activemq.ActiveMQConnectionFactory;
 
 public class Worker
 {
     private Logger log;
     private WorkerConfig config;
-    private Connection con;
+    private java.sql.Connection dbConnection;
+    private QueueConnection jmsConnection;
+    private QueueReceiver jmsReceiver;
 
     public static void main(String argv[])
     {
@@ -27,40 +32,56 @@ public class Worker
         catch(SQLException e) {
             System.out.println(e);
         }
+        catch(JMSException e) {
+            System.out.println(e);
+        }
     }
 
-    public Worker(WorkerConfig config) throws SQLException
+    public Worker(WorkerConfig config) throws SQLException, JMSException
     {
         this.log = Logger.getLogger("worker");
         this.config = config;
 
         // connection to database
-        con = DriverManager.getConnection(config.getDatabaseUrl(), config.getDatabaseLogin(), config.getDatabasePassword());
+        log.info("Connection to database...");
+        dbConnection = DriverManager.getConnection(config.getDatabaseUrl(), config.getDatabaseLogin(), config.getDatabasePassword());
+
+        // connection to jms server
+        log.info("Connection to jms server...");
+        ActiveMQConnectionFactory factory;
+
+        if(config.getJmsLogin() != null)
+           factory = new ActiveMQConnectionFactory(config.getJmsLogin(), config.getJmsPassword(), config.getJmsUrl());
+        else
+           factory = new ActiveMQConnectionFactory(config.getJmsUrl());
+
+        jmsConnection = factory.createQueueConnection();
+        jmsConnection.start();
+        QueueSession session = jmsConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+        Queue queue = session.createQueue("Matches");
+        jmsReceiver = session.createReceiver(queue);
     }
 
-    public void run() throws SQLException
+    public void run() throws SQLException, JMSException
     {
-        log.info("Launching worker...");
+        log.info("Running worker...");
 
         try
         {
-            ResultSet rs = con.createStatement().executeQuery("SELECT * FROM test");
-
-            while(rs.next())
+            while(true)
             {
-                for(int i=1; i <= rs.getMetaData().getColumnCount(); i++)
-                {
-                    System.out.println("column " + i + " = " + rs.getObject(i));
-                }
+                log.info("Waiting match...");
+                System.out.println(jmsReceiver.receive());
             }
+
         }
         finally {
+            log.info("Exiting...");
             try {
-                con.close();
+                dbConnection.close();
+                jmsConnection.close();
             }
             catch(Throwable ignore) {}
         }
-
-        log.info("Exiting...");
     }
 }

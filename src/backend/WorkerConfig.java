@@ -1,18 +1,37 @@
 package backend;
 import org.apache.commons.cli.*;
 import java.util.Collection;
+import org.apache.activemq.ActiveMQConnection;
 
 public class WorkerConfig
 {
     private String databaseUrl;
     private String databaseLogin;
     private String databasePassword;
+    private String playersDirectory;
+    private String gameServerHost;
+    private int gameServerPort;
+    private String jmsUrl;
+    private String jmsLogin;
+    private String jmsPassword;
 
-    public WorkerConfig(String dbUrl, String dbLogin, String dbPassword)
+    public WorkerConfig(String dbUrl, String dbLogin, String dbPassword, String playersDirectory, String gameServerHost, int gameServerPort, String jmsUrl, String jmsLogin, String jmsPassword)
     {
+        assert(dbUrl != null);
         this.databaseUrl = dbUrl;
         this.databaseLogin = dbLogin;
         this.databasePassword = dbPassword;
+        this.playersDirectory = playersDirectory;
+        this.gameServerHost = gameServerHost;
+        this.gameServerPort = gameServerPort;
+
+        if(jmsUrl == null)
+            this.jmsUrl = ActiveMQConnection.DEFAULT_BROKER_URL;
+        else
+            this.jmsUrl = jmsUrl;
+
+        this.jmsLogin = jmsLogin;
+        this.jmsPassword = jmsPassword;
     }
 
     /**
@@ -31,18 +50,30 @@ public class WorkerConfig
         options.addOption(null, "db-url", true, "The database url for JDBC, like jdbc:postgresql://hostname:port/dbname");
         options.addOption(null, "db-login", true, "The database login");
         options.addOption(null, "db-password", true, "The database password");
+        options.addOption(null, "players-dir", true, "The directory where are the players");
+        options.addOption(null, "gameserver-host", true, "The host of the game server");
+
+        Option port = new Option(null, "gameserver-port", true, "The port of the game server");
+        port.setType(Number.class);
+        options.addOption(port);
+
+        options.addOption(null, "jms-url", true, "The url of the jms server");
+        options.addOption(null, "jms-login", true, "The login for the jms server");
+        options.addOption(null, "jms-password", true, "The password for the jms server");
 
         CommandLine args = parser.parse(options, argv);
 
         if(args.hasOption("help"))
         {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("java Worker", options, true);
+            String header = "\nLaunch a worker.";
+            formatter.printHelp("java Worker", header, options, null, true);
             return null;
         }
 
         // required options
         options.getOption("db-url").setRequired(true);
+        options.getOption("gameserver-port").setRequired(true);
 
         // because without that, it doesn't work..
         Options options2 = new Options();
@@ -54,7 +85,13 @@ public class WorkerConfig
         return new WorkerConfig(
             args.getOptionValue("db-url"),
             args.getOptionValue("db-login"),
-            args.getOptionValue("db-password")
+            args.getOptionValue("db-password"),
+            args.getOptionValue("players-dir"),
+            args.getOptionValue("gameserver-host"),
+            ((Number) args.getParsedOptionValue("gameserver-port")).intValue(),
+            args.getOptionValue("jms-url"),
+            args.getOptionValue("jms-login"),
+            args.getOptionValue("jms-password")
         );
     }
 
@@ -71,5 +108,35 @@ public class WorkerConfig
     public String getDatabasePassword()
     {
         return databasePassword;
+    }
+
+    public String getPlayersDirectory()
+    {
+        return playersDirectory;
+    }
+
+    public String getGameServerHost()
+    {
+        return gameServerHost;
+    }
+
+    public int getGameServerPort()
+    {
+        return gameServerPort;
+    }
+
+    public String getJmsUrl()
+    {
+        return jmsUrl;
+    }
+
+    public String getJmsLogin()
+    {
+        return jmsLogin;
+    }
+
+    public String getJmsPassword()
+    {
+        return jmsPassword;
     }
 }
