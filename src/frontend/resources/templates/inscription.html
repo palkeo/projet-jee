@@ -17,7 +17,8 @@
 
         <form action="#" th:action="@{/inscription}" th:object="${user}" method="post">
           Pseudo <input type="text" th:field="*{login}" /><br />
-          Mot de passe <input type="password" th:field="*{encryptedPassword}" /><br />
+          Mot de passe <input type="password" th:field="*{password}" /><br />
+          Confirmez le mot de passe <input type="password" th:field="*{confirmation}" /><br />
           Prénom <input type="text" th:field="*{firstName}" /><br />
           Nom <input type="text" th:field="*{lastName}" /><br />
           <input type="submit" value="Valider" />
