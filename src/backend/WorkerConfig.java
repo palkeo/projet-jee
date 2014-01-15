@@ -9,19 +9,23 @@ public class WorkerConfig
     private String databaseLogin;
     private String databasePassword;
     private String playersDirectory;
+    private String extractDirectory;
     private String gameServerHost;
     private int gameServerPort;
     private String jmsUrl;
     private String jmsLogin;
     private String jmsPassword;
 
-    public WorkerConfig(String dbUrl, String dbLogin, String dbPassword, String playersDirectory, String gameServerHost, int gameServerPort, String jmsUrl, String jmsLogin, String jmsPassword)
+    public WorkerConfig(String dbUrl, String dbLogin, String dbPassword, String playersDirectory, String extractDirectory, String gameServerHost, int gameServerPort, String jmsUrl, String jmsLogin, String jmsPassword)
     {
         assert(dbUrl != null);
+        assert(playersDirectory != null);
+        assert(extractDirectory != null);
         this.databaseUrl = dbUrl;
         this.databaseLogin = dbLogin;
         this.databasePassword = dbPassword;
         this.playersDirectory = playersDirectory;
+        this.extractDirectory = extractDirectory;
         this.gameServerHost = gameServerHost;
         this.gameServerPort = gameServerPort;
 
@@ -51,6 +55,7 @@ public class WorkerConfig
         options.addOption(null, "db-login", true, "The database login");
         options.addOption(null, "db-password", true, "The database password");
         options.addOption(null, "players-dir", true, "The directory where are the players");
+        options.addOption(null, "extract-dir", true, "The directory where player archives are extracted");
         options.addOption(null, "gameserver-host", true, "The host of the game server");
 
         Option port = new Option(null, "gameserver-port", true, "The port of the game server");
@@ -74,6 +79,8 @@ public class WorkerConfig
         // required options
         options.getOption("db-url").setRequired(true);
         options.getOption("gameserver-port").setRequired(true);
+        options.getOption("players-dir").setRequired(true);
+        options.getOption("extract-dir").setRequired(true);
 
         // because without that, it doesn't work..
         Options options2 = new Options();
@@ -87,6 +94,7 @@ public class WorkerConfig
             args.getOptionValue("db-login"),
             args.getOptionValue("db-password"),
             args.getOptionValue("players-dir"),
+            args.getOptionValue("extract-dir"),
             args.getOptionValue("gameserver-host"),
             ((Number) args.getParsedOptionValue("gameserver-port")).intValue(),
             args.getOptionValue("jms-url"),
@@ -112,7 +120,12 @@ public class WorkerConfig
 
     public String getPlayersDirectory()
     {
-        return playersDirectory;
+        return playersDirectory.endsWith("/") ? playersDirectory : playersDirectory + "/";
+    }
+
+    public String getExtractDirectory()
+    {
+        return extractDirectory.endsWith("/") ? extractDirectory : extractDirectory + "/";
     }
 
     public String getGameServerHost()
