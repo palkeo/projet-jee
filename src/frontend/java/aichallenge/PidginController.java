@@ -44,7 +44,7 @@ public class PidginController
     @InitBinder("user")
     protected void initBinder(WebDataBinder binder)
     {
-        binder.setValidator(new RegistringUserValidator());
+        binder.setValidator(new RegistringUserValidator(repo));
     }
 
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
@@ -52,15 +52,7 @@ public class PidginController
     {
         ArrayList<String> errorMessages = new ArrayList<String>();
 
-        if(result.hasErrors()) {
-            errorMessages.add(result.getAllErrors().toString());
-        }
-	if(repo.findByLogin(user.getLogin()) != null)
-	{
-            errorMessages.add("Ce pseudo est déjà utilisé.");
-        }
-
-        if(errorMessages.isEmpty()) {
+        if(errorMessages.isEmpty() && !result.hasErrors()) {
             repo.save(user.toPidgin());
 
             ArrayList<String> successMessages = new ArrayList<String>();

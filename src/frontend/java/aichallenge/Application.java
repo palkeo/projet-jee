@@ -32,7 +32,11 @@ public class Application
     public ResourceBundleMessageSource messageSource()
     {
         ResourceBundleMessageSource ms = new ResourceBundleMessageSource();
-        ms.setBasename("aichallenge/messages.properties");
+        ms.setBasename("messages");
+        ms.setUseCodeAsDefaultMessage(true);
+        ms.setDefaultEncoding("UTF-8");
+
+        System.out.println(">>>>>>>>>>>" + ms.getMessage("required.password", new Object[]{}, java.util.Locale.getDefault()) + "<<<<<<<<<<<<<<<<<");
         return ms;
     }
 
