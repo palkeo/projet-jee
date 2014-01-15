@@ -5,6 +5,12 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 public class RegistringUserValidator implements Validator {
+    private PidginRepository repo;
+
+    public RegistringUserValidator(PidginRepository repo) {
+        this.repo = repo;
+    }
+
     @Override
     public boolean supports(Class clazz) {
         return RegistringUser.class.equals(clazz);
@@ -18,13 +24,17 @@ public class RegistringUserValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "required");
 
         //Fixme: for some reason, that one does not work, we always get null
-        //ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmation", "required");
+        // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmation", "required");
 
         RegistringUser user = (RegistringUser)target;
         System.out.println(user.getConfirmation() == null);
 
         if(!user.getPassword().equals(user.getConfirmation())){
             //errors.rejectValue("password", "notmatch.password");
+        }
+
+	if(repo.findByLogin(user.getLogin()) != null) {
+            errors.rejectValue("login", "alreadyused.login");
         }
     }
 }

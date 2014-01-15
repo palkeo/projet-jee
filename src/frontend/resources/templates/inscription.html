@@ -16,11 +16,16 @@
         <div th:substituteby="layout :: success_messages"></div>
 
         <form action="#" th:action="@{/inscription}" th:object="${user}" method="post">
-          Pseudo <input type="text" th:field="*{login}" /><br />
-          Mot de passe <input type="password" th:field="*{password}" /><br />
-          Confirmez le mot de passe <input type="password" th:field="*{confirmation}" /><br />
-          Prénom <input type="text" th:field="*{firstName}" /><br />
-          Nom <input type="text" th:field="*{lastName}" /><br />
+          <label for="login">Pseudo</label><input type="text" th:field="*{login}" />
+          <ul><li class="error_message" th:each="err : ${#fields.errors('login')}" th:text="${err}" /></ul>
+          <label for="password">Mot de passe</label><input type="password" th:field="*{password}" />
+          <ul><li class="error_message" th:each="err : ${#fields.errors('password')}" th:text="${err}" /></ul>
+          <label for="confirmation">Confirmez le mot de passe</label><input type="password" th:field="*{confirmation}" />
+          <ul><li class="error_message" th:each="err : ${#fields.errors('confirmation')}" th:text="${err}" /></ul>
+          <label for="firstName">Prénom</label><input type="text" th:field="*{firstName}" />
+          <ul><li class="error_message" th:each="err : ${#fields.errors('firstName')}" th:text="${err}" /></ul>
+          <label for="lastName">Nom</label><input type="text" th:field="*{lastName}" />
+          <ul><li class="error_message" th:each="err : ${#fields.errors('lastName')}" th:text="${err}" /></ul>
           <input type="submit" value="Valider" />
         </form>
       </div>
