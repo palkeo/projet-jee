@@ -804,7 +804,8 @@ header nav ul li a {
   text-decoration: none;
 }
 header nav ul li a:hover,
-header nav ul li a:active {
+header nav ul li a:active,
+header nav ul li a:focus {
   color: #94C1FF;
   text-decoration: none;
 }
