@@ -26,6 +26,15 @@ public class PidginController
     @Autowired
     private PidginRepository repo;
 
+    @Autowired
+    private PidginInfo pidginInfo;
+
+    @ModelAttribute("current_user")
+    public Pidgin getUser()
+    {
+        return pidginInfo.getCurrentUser();
+    }
+
     @RequestMapping("/users/list")
     public String usersList(Model model)
     {
