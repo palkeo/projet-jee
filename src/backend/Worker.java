@@ -103,12 +103,12 @@ public class Worker
                 // fetch match information
                 PreparedStatement ps = dbConnection.prepareStatement("SELECT "
                     + "match.state, game.name AS game_name, game.class_name, "
-                    + "ia1.id AS ia1_id, ia1.filename AS ia1_filename, ia1.name AS ia1_name, "
-                    + "ia2.id AS ia2_id, ia2.filename AS ia2_filename, ia2.name AS ia2_name "
+                    + "ai1.id AS ai1_id, ai1.filename AS ai1_filename, ai1.name AS ai1_name, "
+                    + "ai2.id AS ai2_id, ai2.filename AS ai2_filename, ai2.name AS ai2_name "
                     + "FROM match "
                     + "LEFT JOIN game ON game.id=match.game "
-                    + "LEFT JOIN ia AS ia1 ON ia1.id=match.ia1 "
-                    + "LEFT JOIN ia AS ia2 ON ia2.id=match.ia2 "
+                    + "LEFT JOIN ai AS ai1 ON ai1.id=match.ai1 "
+                    + "LEFT JOIN ai AS ai2 ON ai2.id=match.ai2 "
                     + "WHERE match.id=?");
                 ps.setInt(1, matchId);
                 ResultSet rs = ps.executeQuery();
@@ -125,7 +125,7 @@ public class Worker
                     return;
                 }
 
-                log.info(String.format("%s -- %s vs %s", rs.getString("game_name"), rs.getString("ia1_name"), rs.getString("ia2_name")));
+                log.info(String.format("%s -- %s vs %s", rs.getString("game_name"), rs.getString("ai1_name"), rs.getString("ai2_name")));
 
                 // save match state (running) and worker
                 ps = dbConnection.prepareStatement("UPDATE match SET state=1, worker=? WHERE id=?");
@@ -136,9 +136,9 @@ public class Worker
                 ps.executeUpdate();
 
                 // check for archives
-                String[] iaFilenames = {rs.getString("ia1_filename"), rs.getString("ia2_filename")};
+                String[] aiFilenames = {rs.getString("ai1_filename"), rs.getString("ai2_filename")};
 
-                for(String filename : iaFilenames)
+                for(String filename : aiFilenames)
                 {
                     File f = new File(config.getPlayersDirectory() + filename);
                     if(!f.isFile())

@@ -16,12 +16,12 @@ public class Match
     private long id;
 
     @ManyToOne
-    private IA ia1;
+    private AI ai1;
 
     private int score1;
 
     @ManyToOne
-    private IA ia2;
+    private AI ai2;
 
     private int score2;
 
@@ -43,6 +43,6 @@ public class Match
     @Override
     public String toString()
     {
-        return "Match(" + this.ia1 + ", " + this.score1 + ", " + this.ia2 + ", " + this.score2 + ", " + this.game + ", " + this.worker + ", " + this.state + ")";
+        return "Match(" + this.ai1 + ", " + this.score1 + ", " + this.ai2 + ", " + this.score2 + ", " + this.game + ", " + this.worker + ", " + this.state + ")";
     }
 }
