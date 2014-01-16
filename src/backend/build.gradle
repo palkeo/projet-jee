@@ -7,6 +7,7 @@ repositories {
 
 dependencies {
     compile("commons-cli:commons-cli:1.2")
+    compile("commons-io:commons-io:2.4")
     compile("org.codehaus.jackson:jackson-core-lgpl:1.9.13")
     compile("org.codehaus.jackson:jackson-mapper-lgpl:1.9.13")
 

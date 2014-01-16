@@ -9,6 +9,8 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import java.net.*;
 import java.io.IOException;
 import java.io.File;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 
 public class Worker
 {
@@ -103,8 +105,8 @@ public class Worker
                 // fetch match information
                 PreparedStatement ps = dbConnection.prepareStatement("SELECT "
                     + "match.state, game.name AS game_name, game.class_name, "
-                    + "ai1.id AS ai1_id, ai1.filename AS ai1_filename, ai1.name AS ai1_name, "
-                    + "ai2.id AS ai2_id, ai2.filename AS ai2_filename, ai2.name AS ai2_name "
+                    + "ai1.id AS ai1_id, ai1.filename AS ai1_filename, ai1.name AS ai1_name, ai1.elo AS ai1_elo, "
+                    + "ai2.id AS ai2_id, ai2.filename AS ai2_filename, ai2.name AS ai2_name, ai2.elo AS ai2_elo "
                     + "FROM match "
                     + "LEFT JOIN game ON game.id=match.game "
                     + "LEFT JOIN ai AS ai1 ON ai1.id=match.ai1 "
@@ -135,18 +137,92 @@ public class Worker
                 ps.setInt(2, matchId);
                 ps.executeUpdate();
 
-                // check for archives
                 String[] aiFilenames = {rs.getString("ai1_filename"), rs.getString("ai2_filename")};
 
+                // check and extract archives
                 for(String filename : aiFilenames)
                 {
-                    File f = new File(config.getPlayersDirectory() + filename);
-                    if(!f.isFile())
+                    String archive = config.getPlayersDirectory() + filename;
+                    String archiveExtractDir = config.getExtractDirectory() + filename;
+                    String aiDirectory = config.getExtractDirectory() + FilenameUtils.removeExtension(FilenameUtils.removeExtension(filename));
+
+                    // check archive
+                    File archiveFile = new File(archive);
+                    if(!archiveFile.isFile())
                     {
-                        log.info(String.format("Error: cannot find archive %s", config.getPlayersDirectory() + filename));
+                        log.info(String.format("Error: cannot find archive %s", archive));
                         return;
                     }
+
+                    // copy to extract directory
+                    File archiveExtractDirFile = new File(archiveExtractDir);
+                    try
+                    {
+                        FileUtils.copyFile(archiveFile, archiveExtractDirFile);
+                    }
+                    catch(IOException e) {
+                        log.info(String.format("Error: cannot copy archive %s to %s : %s", archive, archiveExtractDir, e));
+                        return;
+                    }
+
+                    // extract archive
+                    File aiDirectoryFile = new File(aiDirectory);
+                    if(!aiDirectoryFile.isDirectory())
+                    {
+                        aiDirectoryFile.mkdir();
+                        ProcessBuilder pb = new ProcessBuilder("tar", "xf", archiveExtractDir, "-C", aiDirectory);
+                        Process p = null;
+
+                        try
+                        {
+                            p = pb.start();
+                            p.waitFor();
+                        }
+                        catch(IOException e) {
+                            log.info(String.format("Error: cannot extract archive %s : %s", archive, e));
+                            return;
+                        }
+                        catch(InterruptedException e) {
+                            log.info(String.format("Error: cannot extract archive %s : %s", archive, e));
+                            return;
+                        }
+
+                        if(p.exitValue() != 0)
+                        {
+                            log.info(String.format("Error: cannot extract archive %s (tar returned error code : %d)", archive, p.exitValue()));
+                            return;
+                        }
+                    }
                 }
+
+                // instanciate game engine
+                Class<?> gameEngineClass = null;
+
+                try
+                {
+                    gameEngineClass = Class.forName(rs.getString("class_name"));
+                }
+                catch(ClassNotFoundException e) {
+                    log.info(String.format("Error: %s", e));
+                    return;
+                }
+
+                GameEngine gameEngine = null;
+
+                try
+                {
+                    gameEngine = (GameEngine) gameEngineClass.newInstance();
+                }
+                catch(InstantiationException e) {
+                    log.info(String.format("Error: cannot instanciate game engine : %s", e));
+                    return;
+                }
+                catch(IllegalAccessException e) {
+                    log.info(String.format("Error: cannot instanciate game engine : %s", e));
+                    return;
+                }
+
+                // launch IAs
 
                 // TODO : finish..
             }
