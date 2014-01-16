@@ -1,13 +1,23 @@
 package backend;
-import java.sql.*;
+
+import java.util.Enumeration;
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
+import java.sql.*;
+import javax.jms.*;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import java.net.*;
+import java.io.IOException;
+import java.io.File;
 
 public class Worker
 {
     private Logger log;
     private WorkerConfig config;
-    private Connection con;
+    private java.sql.Connection dbConnection;
+    private QueueConnection jmsConnection;
+    private QueueReceiver jmsReceiver;
+    private ServerSocket socket;
 
     public static void main(String argv[])
     {
@@ -27,40 +37,148 @@ public class Worker
         catch(SQLException e) {
             System.out.println(e);
         }
+        catch(JMSException e) {
+            System.out.println(e);
+        }
+        catch(UnknownHostException e) {
+            System.out.println(e);
+        }
+        catch(IOException e) {
+            System.out.println(e);
+        }
     }
 
-    public Worker(WorkerConfig config) throws SQLException
+    public Worker(WorkerConfig config) throws SQLException, JMSException, UnknownHostException, IOException
     {
         this.log = Logger.getLogger("worker");
         this.config = config;
 
         // connection to database
-        con = DriverManager.getConnection(config.getDatabaseUrl(), config.getDatabaseLogin(), config.getDatabasePassword());
+        log.info("Connection to database");
+        dbConnection = DriverManager.getConnection(config.getDatabaseUrl(), config.getDatabaseLogin(), config.getDatabasePassword());
+
+        // connection to jms server
+        log.info("Connection to jms server");
+        ActiveMQConnectionFactory factory;
+
+        if(config.getJmsLogin() != null)
+           factory = new ActiveMQConnectionFactory(config.getJmsLogin(), config.getJmsPassword(), config.getJmsUrl());
+        else
+           factory = new ActiveMQConnectionFactory(config.getJmsUrl());
+
+        jmsConnection = factory.createQueueConnection();
+        jmsConnection.start();
+        QueueSession session = jmsConnection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+        Queue queue = session.createQueue("Matches");
+        jmsReceiver = session.createReceiver(queue);
+
+        // listening
+        if(config.getGameServerHost() != null)
+        {
+            socket = new ServerSocket(config.getGameServerPort(), 0, InetAddress.getByName(config.getGameServerHost()));
+        }
+        else
+        {
+            socket = new ServerSocket(config.getGameServerPort());
+        }
+        log.info(String.format("Listening on %s:%d",
+            config.getGameServerHost() == null ? "localhost" : config.getGameServerHost(),
+            config.getGameServerPort()));
     }
 
-    public void run() throws SQLException
+    public void run() throws SQLException, JMSException
     {
-        log.info("Launching worker...");
+        log.info("Running worker");
 
         try
         {
-            ResultSet rs = con.createStatement().executeQuery("SELECT * FROM test");
-
-            while(rs.next())
+            while(true)
             {
-                for(int i=1; i <= rs.getMetaData().getColumnCount(); i++)
+                // waiting match id
+                log.info("Waiting match...");
+                TextMessage message = (TextMessage)jmsReceiver.receive();
+                int matchId = Integer.parseInt(message.getText());
+                log.info(String.format("Launching match %d", matchId));
+
+                // fetch match information
+                PreparedStatement ps = dbConnection.prepareStatement("SELECT "
+                    + "match.state, game.name AS game_name, game.class_name, "
+                    + "ai1.id AS ai1_id, ai1.filename AS ai1_filename, ai1.name AS ai1_name, "
+                    + "ai2.id AS ai2_id, ai2.filename AS ai2_filename, ai2.name AS ai2_name "
+                    + "FROM match "
+                    + "LEFT JOIN game ON game.id=match.game "
+                    + "LEFT JOIN ai AS ai1 ON ai1.id=match.ai1 "
+                    + "LEFT JOIN ai AS ai2 ON ai2.id=match.ai2 "
+                    + "WHERE match.id=?");
+                ps.setInt(1, matchId);
+                ResultSet rs = ps.executeQuery();
+
+                if(!rs.next())
                 {
-                    System.out.println("column " + i + " = " + rs.getObject(i));
+                    log.info(String.format("Error: cannot find match %d", matchId));
+                    return;
                 }
+
+                if(rs.getInt("state") != 0)
+                {
+                    log.info(String.format("Error: match already %s", rs.getInt("state") == 1 ? "running" : "finished"));
+                    return;
+                }
+
+                log.info(String.format("%s -- %s vs %s", rs.getString("game_name"), rs.getString("ai1_name"), rs.getString("ai2_name")));
+
+                // save match state (running) and worker
+                ps = dbConnection.prepareStatement("UPDATE match SET state=1, worker=? WHERE id=?");
+                ps.setString(1, String.format("%s:%d",
+                    getLANAddress() == null ? socket.getInetAddress().getHostName() : getLANAddress().getHostName(),
+                    socket.getLocalPort()));
+                ps.setInt(2, matchId);
+                ps.executeUpdate();
+
+                // check for archives
+                String[] aiFilenames = {rs.getString("ai1_filename"), rs.getString("ai2_filename")};
+
+                for(String filename : aiFilenames)
+                {
+                    File f = new File(config.getPlayersDirectory() + filename);
+                    if(!f.isFile())
+                    {
+                        log.info(String.format("Error: cannot find archive %s", config.getPlayersDirectory() + filename));
+                        return;
+                    }
+                }
+
+                // TODO : finish..
             }
         }
         finally {
+            log.info("Exiting...");
             try {
-                con.close();
+                dbConnection.close();
+                jmsConnection.close();
             }
             catch(Throwable ignore) {}
         }
+    }
 
-        log.info("Exiting...");
+    public static InetAddress getLANAddress()
+    {
+        try
+        {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while(interfaces.hasMoreElements())
+            {
+                Enumeration<InetAddress> addresses = interfaces.nextElement().getInetAddresses();
+                while (addresses.hasMoreElements())
+                {
+                    InetAddress addr = addresses.nextElement();
+                    if(addr.getHostAddress().startsWith("192.168."))
+                        return addr;
+                }
+            }
+        }
+        catch(SocketException e) {}
+
+        return null;
     }
 }

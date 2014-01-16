@@ -11,6 +11,9 @@ dependencies {
     compile("org.codehaus.jackson:jackson-mapper-lgpl:1.9.13")
 
     compile("postgresql:postgresql:9.1-901.jdbc4")
+
+    compile("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1")
+    compile("org.apache.activemq:activemq-all:5.4.2")
 }
 
 jar {

@@ -8,12 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.WebDataBinder;
+import javax.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class PidginController
@@ -40,57 +45,36 @@ public class PidginController
     @RequestMapping(value="/inscription", method=RequestMethod.GET)
     public String inscription(Model model)
     {
-	model.addAttribute("user", new Pidgin());
+	model.addAttribute("user", new RegistringUser());
 	return "inscription";
     }
 
-    @RequestMapping(value="/inscription", method=RequestMethod.POST)
-    public String inscriptionResult(@ModelAttribute Pidgin user, Model model, RedirectAttributes redirectAttributes)
+    @InitBinder("user")
+    protected void initBinder(WebDataBinder binder)
     {
-	boolean inscriptionSuccessful = true;
+        binder.setValidator(new RegistringUserValidator(repo));
+    }
+
+    @RequestMapping(value="/inscription", method=RequestMethod.POST)
+    public String inscriptionResult(@ModelAttribute("user") @Valid RegistringUser user, BindingResult result, Model model)
+    {
         ArrayList<String> errorMessages = new ArrayList<String>();
 
-	if(user.getLogin().equals(""))
-	{
-            errorMessages.add("Le pseudo ne doit pas être vide.");
-	    inscriptionSuccessful = false;
-	}
-	// FIXME : that's ugly. Really.
-        if(user.getEncryptedPassword().equals("d41d8cd98f00b204e9800998ecf8427e"))
-        {
-            errorMessages.add("Le mot de passe ne doit pas être vide.");
-            inscriptionSuccessful = false;
-        }
-	if(user.getFirstName().equals(""))
-	{
-            errorMessages.add("Le prénom ne doit pas être vide.");
-	    inscriptionSuccessful = false;
-	}
-	if(user.getLastName().equals(""))
-	{
-            errorMessages.add("Le nom ne doit pas être vide.");
-	    inscriptionSuccessful = false;
-	}
-	if(repo.findByLogin(user.getLogin()) != null)
-	{
-            errorMessages.add("Ce pseudo est déjà utilisé.");
-	    inscriptionSuccessful = false;
-	}
+        if(errorMessages.isEmpty() && !result.hasErrors()) {
+            repo.save(user.toPidgin());
 
-	if(!inscriptionSuccessful)
-        {
+            ArrayList<String> successMessages = new ArrayList<String>();
+            successMessages.add("L'inscription s'est déroulée avec succès. " +
+                                "Vous pouvez dès à présent vous connecter a" +
+                                "vec les identifiants que vous avez choisis.");
+            model.addAttribute("successMessages", successMessages);
+            return "home";
+        }
+        else {
+            model.addAttribute("errorMessages", errorMessages);
             model.addAttribute("user", user);
-	    model.addAttribute("errorMessages", errorMessages);
-	    return "inscription";
+            return "inscription";
         }
-
-	repo.save(user);
-        ArrayList<String> successMessages = new ArrayList<String>();
-        successMessages.add("L'inscription s'est déroulée avec succès. " +
-                            "Vous pouvez dès à présent vous connecter a" +
-                            "vec les identifiants que vous avez choisis.");
-        redirectAttributes.addFlashAttribute("successMessages", successMessages);
-
-	return "redirect:/";
     }
 }
+
