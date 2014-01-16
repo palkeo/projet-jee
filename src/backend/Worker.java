@@ -1,6 +1,7 @@
 package backend;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.logging.Logger;
 import org.apache.commons.cli.ParseException;
 import java.sql.*;
@@ -9,8 +10,15 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import java.net.*;
 import java.io.IOException;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.UnsupportedEncodingException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import backend.InvalidMoveException;
 
 public class Worker
 {
@@ -137,9 +145,35 @@ public class Worker
                 ps.setInt(2, matchId);
                 ps.executeUpdate();
 
-                String[] aiFilenames = {rs.getString("ai1_filename"), rs.getString("ai2_filename")};
+                // instanciate game engine
+                Class<?> gameEngineClass = null;
+                GameEngine gameEngine = null;
+
+                try
+                {
+                    gameEngineClass = Class.forName(rs.getString("class_name"));
+                }
+                catch(ClassNotFoundException e) {
+                    log.info(String.format("Error: %s", e));
+                    return;
+                }
+
+                try
+                {
+                    gameEngine = (GameEngine) gameEngineClass.newInstance();
+                }
+                catch(InstantiationException e) {
+                    log.info(String.format("Error: cannot instanciate game engine : %s", e));
+                    return;
+                }
+                catch(IllegalAccessException e) {
+                    log.info(String.format("Error: cannot instanciate game engine : %s", e));
+                    return;
+                }
 
                 // check and extract archives
+                String[] aiFilenames = {rs.getString("ai1_filename"), rs.getString("ai2_filename")};
+
                 for(String filename : aiFilenames)
                 {
                     String archive = config.getPlayersDirectory() + filename;
@@ -195,36 +229,116 @@ public class Worker
                     }
                 }
 
-                // instanciate game engine
-                Class<?> gameEngineClass = null;
+                // launch IAs
+                Process[] playerProcesses = {null, null};
+                Socket[] playerSockets = {null, null};
+                BufferedReader[] playerReaders = {null, null};
+                int i = 0;
+                Integer winner = null;
 
+                for(String filename : aiFilenames)
+                {
+                    // search launch file
+                    String aiDirectory = config.getExtractDirectory() + FilenameUtils.removeExtension(FilenameUtils.removeExtension(filename));
+                    File aiDirectoryFile = new File(aiDirectory);
+                    File launch = new File(aiDirectory + "/launch");
+
+                    if(!launch.isFile())
+                    {
+                        List<File> files = (List<File>) FileUtils.listFilesAndDirs(aiDirectoryFile, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+                        if(files.size() == 1 && files.get(0).isDirectory())
+                        {
+                            launch = new File(aiDirectory + "/" + files.get(0).getName() + "/launch");
+                        }
+                    }
+
+                    if(!launch.isFile())
+                    {
+                        log.info(String.format("Error: cannot find launch file for ai %s", filename));
+                        return;
+                    }
+
+                    // launch it
+                    ProcessBuilder pb = new ProcessBuilder("bash", launch.getAbsolutePath());
+                    pb.directory(new File(config.getExtractDirectory()));
+
+                    try
+                    {
+                        playerProcesses[i] = pb.start();
+                    }
+                    catch(IOException e) {
+                        log.info(String.format("Error: cannot start AI %s : %s", launch.getAbsolutePath(), e));
+                        return;
+                    }
+
+                    try
+                    {
+                        playerSockets[i] = socket.accept();
+                        playerReaders[i] = new BufferedReader(new InputStreamReader(playerSockets[i].getInputStream(), "ISO-8859-1"));
+                    }
+                    catch(IOException e) {
+                        log.info(String.format("Error: %s", e));
+                        return;
+                    }
+
+                    i++;
+                }
+
+                // generate match
                 try
                 {
-                    gameEngineClass = Class.forName(rs.getString("class_name"));
+                    while(winner == null)
+                    {
+                        int currentPlayer = gameEngine.getCurrentPlayer();
+                        Socket s = playerSockets[currentPlayer];
+
+                        // send state
+                        String gameState = gameEngine.getState() + "\n";
+                        s.getOutputStream().write(gameState.getBytes("ISO-8859-1"));
+
+                        // receive move
+                        String line = playerReaders[currentPlayer].readLine();
+                        ObjectMapper mapper = new ObjectMapper();
+                        JsonNode move = mapper.readTree(line);
+
+                        try
+                        {
+                            if(gameEngine.play(move))
+                            {
+                                winner = gameEngine.getScore(0) > gameEngine.getScore(1) ? 0 : 1;
+                            }
+                        }
+                        catch(InvalidMoveException e) {
+                            log.info(String.format("Error: %s", e));
+                            winner = currentPlayer == 0 ? 1 : 0;
+                        }
+                    }
                 }
-                catch(ClassNotFoundException e) {
+                catch(IOException e) {
                     log.info(String.format("Error: %s", e));
                     return;
                 }
 
-                GameEngine gameEngine = null;
-
-                try
+                // finish
+                for(Process p : playerProcesses)
                 {
-                    gameEngine = (GameEngine) gameEngineClass.newInstance();
-                }
-                catch(InstantiationException e) {
-                    log.info(String.format("Error: cannot instanciate game engine : %s", e));
-                    return;
-                }
-                catch(IllegalAccessException e) {
-                    log.info(String.format("Error: cannot instanciate game engine : %s", e));
-                    return;
+                    if(p != null)
+                        p.destroy();
                 }
 
-                // launch IAs
+                for(Socket s : playerSockets)
+                {
+                    if(s != null)
+                    {
+                        try
+                        {
+                            s.close();
+                        }
+                        catch(IOException e) {}
+                    }
+                }
 
-                // TODO : finish..
+                log.info(String.format("IA %s win !", rs.getString("ai" + winner + "_name")));
             }
         }
         finally {
