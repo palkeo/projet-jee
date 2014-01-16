@@ -15,15 +15,12 @@
         </div>
 
 
-        <form th:unless="${user}" action="/" method="post"><div>
+        <form action="/" method="post"><div>
             <input name="username" id="header-connect-pseudo" placeholder="Pseudo" type="text" />
             <input name="password" id="header-connect-pass" placeholder="Mot de passe" type="password" />
             <input value="Connexion" id="header-connect-submit" name="connect" type="submit" />
             <div><a id="header-inscription" href="/inscription">Inscription</a></div>
         </div></form>
-        <div th:if="${user}">
-          Bienvenue, <span th:text="${user.login}"></span>. <a href="/disconnect">Déconnexion</a>
-        </div>
 
         <nav>
             <ul>
