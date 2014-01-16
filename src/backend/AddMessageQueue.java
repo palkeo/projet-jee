@@ -5,7 +5,7 @@ import javax.jms.*;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-public class LaunchMatch
+public class AddMessageQueue
 {
     public static void main(String argv[])
     {
@@ -26,7 +26,7 @@ public class LaunchMatch
             {
                 HelpFormatter formatter = new HelpFormatter();
                 String header = "\nAdd a message to the JMS Queue.";
-                formatter.printHelp("java LaunchMatch <message..>", header, options, null, true);
+                formatter.printHelp("java AddMessageQueue <message..>", header, options, null, true);
                 return;
             }
 
