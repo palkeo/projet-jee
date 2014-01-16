@@ -51,7 +51,7 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
 
             ArrayList<Integer> col;
             if(0 <= givenCol && givenCol < colNumber
-            && (col = cols.get(givenCol)).size() < lineNumber-1) {
+            && (col = cols.get(givenCol)).size() <= lineNumber-1) {
                 int player = getCurrentPlayer();
                 col.add(player);
 
@@ -65,7 +65,7 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
             }
             else {
                 throw new InvalidMoveException(
-                    "Cannot play in column" + givenCol
+                    "Cannot play in column " + givenCol
                 );
             }
         }
