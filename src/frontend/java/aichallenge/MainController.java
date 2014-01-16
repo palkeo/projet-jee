@@ -19,9 +19,9 @@ public class MainController
     @Autowired
     private PidginRepository repo;
     @Autowired
-    private PidginInfo pidginInfo;
+    private PidginInfo pidginInfo; 
 
-    @ModelAttribute("user")
+    @ModelAttribute("current_user")
     public Pidgin getUser()
     {
         return pidginInfo.getCurrentUser();

@@ -53,11 +53,8 @@ public class AddMessageQueue
 
             connection.close();
         }
-        catch(ParseException e) {
-            System.out.println(e);
-        }
-        catch(JMSException e) {
-            System.out.println(e);
+        catch(ParseException | JMSException e) {
+            e.printStackTrace();
         }
     }
 }
