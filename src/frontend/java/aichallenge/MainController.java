@@ -21,6 +21,12 @@ public class MainController
     @Autowired
     private PidginInfo pidginInfo;
 
+    @ModelAttribute("user")
+    public Pidgin getUser()
+    {
+        return pidginInfo.getCurrentUser();
+    }
+
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String home(Model model)
     {
