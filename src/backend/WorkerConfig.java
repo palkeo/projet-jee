@@ -59,7 +59,7 @@ public class WorkerConfig
         options.addOption(null, "gameserver-host", true, "The host of the game server");
 
         Option port = new Option(null, "gameserver-port", true, "The port of the game server");
-        port.setType(Integer.class);
+        port.setType(Number.class);
         options.addOption(port);
 
         options.addOption(null, "jms-url", true, "The url of the jms server");
@@ -96,7 +96,7 @@ public class WorkerConfig
             args.getOptionValue("players-dir"),
             args.getOptionValue("extract-dir"),
             args.getOptionValue("gameserver-host"),
-            ((Integer) args.getParsedOptionValue("gameserver-port")).intValue(),
+            ((Number) args.getParsedOptionValue("gameserver-port")).intValue(),
             args.getOptionValue("jms-url"),
             args.getOptionValue("jms-login"),
             args.getOptionValue("jms-password")
