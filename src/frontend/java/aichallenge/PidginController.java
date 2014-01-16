@@ -59,9 +59,7 @@ public class PidginController
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
     public String inscriptionResult(@ModelAttribute("user") @Valid RegistringUser user, BindingResult result, Model model)
     {
-        ArrayList<String> errorMessages = new ArrayList<String>();
-
-        if(errorMessages.isEmpty() && !result.hasErrors()) {
+        if(!result.hasErrors()) {
             repo.save(user.toPidgin());
 
             ArrayList<String> successMessages = new ArrayList<String>();
@@ -72,7 +70,6 @@ public class PidginController
             return "home";
         }
         else {
-            model.addAttribute("errorMessages", errorMessages);
             model.addAttribute("user", user);
             return "inscription";
         }

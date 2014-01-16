@@ -33,20 +33,8 @@ public class Worker
                 worker.run();
             }
         }
-        catch(ParseException e) {
-            System.out.println(e);
-        }
-        catch(SQLException e) {
-            System.out.println(e);
-        }
-        catch(JMSException e) {
-            System.out.println(e);
-        }
-        catch(UnknownHostException e) {
-            System.out.println(e);
-        }
-        catch(IOException e) {
-            System.out.println(e);
+        catch(ParseException | SQLException | JMSException | IOException e) {
+            e.printStackTrace();
         }
     }
 
