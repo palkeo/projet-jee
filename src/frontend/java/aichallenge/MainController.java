@@ -30,7 +30,7 @@ public class MainController
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String home(Model model)
     {
-	return "home";
+        return "home";
     }
 
     @RequestMapping(value="/", method=RequestMethod.POST)

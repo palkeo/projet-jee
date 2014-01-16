@@ -12,11 +12,11 @@ public class RegistringUser {
     protected RegistringUser() {}
 
     public RegistringUser(String login, String password, String confirmation, String firstName, String lastName) {
-	this.login = login;
-	this.password = password;
-	this.confirmation = confirmation;
-	this.firstName = firstName;
-	this.lastName = lastName;
+        this.login = login;
+        this.password = password;
+        this.confirmation = confirmation;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public String getLogin()        { return this.login; }

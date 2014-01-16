@@ -33,7 +33,7 @@ public class RegistringUserValidator implements Validator {
             //errors.rejectValue("password", "notmatch.password");
         }
 
-	if(repo.findByLogin(user.getLogin()) != null) {
+        if(repo.findByLogin(user.getLogin()) != null) {
             errors.rejectValue("login", "alreadyused.login");
         }
     }

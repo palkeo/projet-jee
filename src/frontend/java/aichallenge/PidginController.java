@@ -37,16 +37,16 @@ public class PidginController
     @RequestMapping("/users/list")
     public String usersList(Model model)
     {
-	model.addAttribute("users", repo.findAll());
+        model.addAttribute("users", repo.findAll());
 
-	return "usersList";
+        return "usersList";
     }
 
     @RequestMapping(value="/inscription", method=RequestMethod.GET)
     public String inscription(Model model)
     {
-	model.addAttribute("user", new RegistringUser());
-	return "inscription";
+        model.addAttribute("user", new RegistringUser());
+        return "inscription";
     }
 
     @InitBinder("user")

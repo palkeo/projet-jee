@@ -54,35 +54,35 @@ public class Application
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-	DataSource dataSource,
-	JpaVendorAdapter jpaVendorAdapter)
+        DataSource dataSource,
+        JpaVendorAdapter jpaVendorAdapter)
     {
-	LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
-	lef.setDataSource(dataSource);
-	lef.setJpaVendorAdapter(jpaVendorAdapter);
-	lef.setPackagesToScan("aichallenge");
+        LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
+        lef.setDataSource(dataSource);
+        lef.setJpaVendorAdapter(jpaVendorAdapter);
+        lef.setPackagesToScan("aichallenge");
 
-	return lef;
+        return lef;
     }
 
     @Bean
     public JpaVendorAdapter jpaVendorAdapter()
     {
-	HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-	hibernateJpaVendorAdapter.setShowSql(true);
-	hibernateJpaVendorAdapter.setGenerateDdl(true);
-	hibernateJpaVendorAdapter.setDatabase(Database.POSTGRESQL);
+        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
+        hibernateJpaVendorAdapter.setShowSql(true);
+        hibernateJpaVendorAdapter.setGenerateDdl(true);
+        hibernateJpaVendorAdapter.setDatabase(Database.POSTGRESQL);
         hibernateJpaVendorAdapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQLDialect");
-	return hibernateJpaVendorAdapter;
+        return hibernateJpaVendorAdapter;
     }
 
     @Bean
     public PlatformTransactionManager transactionManager() {
-	return new JpaTransactionManager();
+        return new JpaTransactionManager();
     }
 
     public static void main(String[] args)
     {
-	SpringApplication.run(Application.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }
