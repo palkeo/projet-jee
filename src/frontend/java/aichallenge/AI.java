@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class IA
+public class AI
 {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -28,6 +28,6 @@ public class IA
     @Override
     public String toString()
     {
-        return "IA(" + this.name + ", " + this.filename + ", " + this.pidgin + ", " + this.game + ", " + this.elo + ")";
+        return "AI(" + this.name + ", " + this.filename + ", " + this.pidgin + ", " + this.game + ", " + this.elo + ")";
     }
 }
