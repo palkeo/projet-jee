@@ -14,6 +14,7 @@
             AI Challenge
         </div>
 
+        <div id="header-topright">
         <form th:unless="${currentUser}" action="/" method="post"><div>
             <input name="username" id="header-connect-pseudo" placeholder="Pseudo" type="text" />
             <input name="password" id="header-connect-pass" placeholder="Mot de passe" type="password" />
@@ -22,6 +23,7 @@
         </div></form>
         <div th:if="${currentUser}">
           Bienvenue, <span th:text="${currentUser.login}"></span>. <a href="/disconnect">Déconnexion</a>
+        </div>
         </div>
 
         <nav>
