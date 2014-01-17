@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.WebDataBinder;
-import javax.validation.Valid;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+
+import javax.validation.Valid;
+import javax.servlet.http.HttpSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,4 +83,22 @@ public class PidginController
             return "inscription";
         }
     }
+
+    @RequestMapping("/logout")
+    public String logout(
+        Model model,
+        HttpSession session,
+        RedirectAttributes redirectAttributes)
+    {
+        session.invalidate();
+
+        System.out.println(model.asMap().size());
+
+        ArrayList<String> successMessages = new ArrayList<String>();
+        successMessages.add("Vous êtes maintenant déconnecté.");
+        redirectAttributes.addFlashAttribute("successMessages", successMessages);
+
+        return "redirect:/";
+    }
+
 }

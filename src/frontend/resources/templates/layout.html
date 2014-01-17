@@ -21,7 +21,7 @@
             <div><a id="header-inscription" href="/inscription">Inscription</a></div>
         </div></form>
         <div th:if="${current_user}">
-          Bienvenue, <span th:text="${current_user.login}"></span>. <a href="/disconnect">Déconnexion</a>
+          Bienvenue, <span th:text="${current_user.login}"></span>. <a href="/logout">Déconnexion</a>
         </div>
 
         <nav>
