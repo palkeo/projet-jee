@@ -20,7 +20,7 @@ public class MainController
     @Autowired
     private PidginRepository repo;
     @Autowired
-    private PidginInfo pidginInfo; 
+    private PidginInfo pidginInfo;
 
     @ModelAttribute("currentUser")
     public Pidgin getUser()
@@ -32,17 +32,6 @@ public class MainController
     public String home(Model model)
     {
         return "home";
-    }
-
-    @RequestMapping(value="/disconnect", method=RequestMethod.GET)
-    public String disconnect(Model model, RedirectAttributes redirectAttributes)
-    {
-        pidginInfo.setCurrentUser(null);
-        ArrayList<String> successMessages = new ArrayList<String>();
-        successMessages.add("Vous êtes maintenant déconnecté.");
-        //todo:messages:successMessages.add(messageSource.getMessage("disconnected", null, null));
-        redirectAttributes.addFlashAttribute("successMessages", successMessages);
-        return "redirect:/";
     }
 
     @RequestMapping(value="/", method=RequestMethod.POST)
@@ -79,4 +68,3 @@ public class MainController
         return "redirect:/";
     }
 }
-
