@@ -18,7 +18,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MainController
 {
     @Autowired
-    private PidginRepository repo;
+    private PidginRepository pidginRepo;
+    @Autowired
+    private GameRepository gameRepo;
+
     @Autowired
     private PidginInfo pidginInfo;
 
@@ -31,6 +34,7 @@ public class MainController
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String home(Model model)
     {
+        model.addAttribute("games", gameRepo.findAll());
         return "home";
     }
 
@@ -44,7 +48,7 @@ public class MainController
         ArrayList<String> errorMessages = new ArrayList<String>();
         ArrayList<String> successMessages = new ArrayList<String>();
 
-        Pidgin user = repo.findByLogin(login);
+        Pidgin user = pidginRepo.findByLogin(login);
         if(user == null)
         {
             //todo:messages:errorMessages.add(messageSource.getMessage("unknown.user", new Object[]{login}, null));
