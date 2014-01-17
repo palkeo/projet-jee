@@ -1113,8 +1113,8 @@ div#graph_presets {
   box-sizing: border-box;
   display: inline;
   float: left;
-  width: 41.66666666666667%;
+  width: 50%;
   padding: 0 20px;
-  *width: 37.121212121212125%;
+  *width: 45.45454545454545%;
   *padding: 0 19.954545454545453px;
 }
