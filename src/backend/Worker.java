@@ -150,11 +150,7 @@ public class Worker
                 {
                     gameEngine = (GameEngine) gameEngineClass.newInstance();
                 }
-                catch(InstantiationException e) {
-                    log.info(String.format("Error: cannot instanciate game engine : %s", e));
-                    return;
-                }
-                catch(IllegalAccessException e) {
+                catch(InstantiationException | IllegalAccessException e) {
                     log.info(String.format("Error: cannot instanciate game engine : %s", e));
                     return;
                 }
@@ -200,11 +196,7 @@ public class Worker
                             p = pb.start();
                             p.waitFor();
                         }
-                        catch(IOException e) {
-                            log.info(String.format("Error: cannot extract archive %s : %s", archive, e));
-                            return;
-                        }
-                        catch(InterruptedException e) {
+                        catch(IOException | InterruptedException e) {
                             log.info(String.format("Error: cannot extract archive %s : %s", archive, e));
                             return;
                         }
