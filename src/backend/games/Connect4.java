@@ -44,6 +44,7 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
         puts its token in. */
     @Override
     public boolean play(JsonNode move) throws InvalidMoveException {
+        int player = getCurrentPlayer();
         incCurrentTurn();
 
         if(move.isInt()) {
@@ -52,7 +53,6 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
             ArrayList<Integer> col;
             if(0 <= givenCol && givenCol < colNumber
             && (col = cols.get(givenCol)).size() <= lineNumber-1) {
-                int player = getCurrentPlayer();
                 col.add(player);
 
                 if(hasWon(givenCol)) {
