@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta th:substituteby="layout :: charset" />
+    <meta th:substituteby="layout :: viewport" />
+    <link th:substituteby="layout :: stylesheet" />
+    <title>Liste des jeux</title>
+  </head>
+  <body>
+
+    <div th:include="layout :: header"></div>
+
+    <div id="grid"><div id="content">
+
+        <div th:substituteby="layout :: error_messages"></div>
+        <div th:substituteby="layout :: success_messages"></div>
+
+        <table>
+          <tr>
+            <th>Nom du jeu</th>
+            <th>Description</th>
+          </tr>
+          <tr th:each="game: ${games}">
+            <td th:text="${game.name}">name</td>
+            <td th:text="${game.description}">description</td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+
+    <div th:include="layout :: footer"></div>
+
+  </body>
+</html>

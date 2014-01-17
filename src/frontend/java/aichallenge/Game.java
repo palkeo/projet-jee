@@ -23,4 +23,12 @@ public class Game
     {
         return "Game(" + this.name + ", " + this.description + ", " + this.className + ")";
     }
+
+    public String getName() { return this.name; }
+    public String getDescription() { return this.description; }
+    public String getClassName() { return this.className; }
+
+    public void setName(String name) { this.name = name; }
+    public void setDescription(String description) { this.description = description; }
+    public void setClassName(String className) { this.className = className; }
 }
