@@ -57,22 +57,28 @@ public class PidginController
     }
 
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
-    public String inscriptionResult(@ModelAttribute("user") @Valid RegistringUser user, BindingResult result, Model model)
+    public String inscriptionResult(
+        @ModelAttribute("user") @Valid RegistringUser user,
+        BindingResult result,
+        Model model,
+        RedirectAttributes redirectAttributes)
     {
-        if(!result.hasErrors()) {
+        if(!result.hasErrors())
+        {
             repo.save(user.toPidgin());
 
             ArrayList<String> successMessages = new ArrayList<String>();
             successMessages.add("L'inscription s'est déroulée avec succès. " +
                                 "Vous pouvez dès à présent vous connecter a" +
                                 "vec les identifiants que vous avez choisis.");
-            model.addAttribute("successMessages", successMessages);
-            return "home";
+            redirectAttributes.addFlashAttribute("successMessages", successMessages);
+
+            return "redirect:/";
         }
-        else {
+        else
+        {
             model.addAttribute("user", user);
             return "inscription";
         }
     }
 }
-
