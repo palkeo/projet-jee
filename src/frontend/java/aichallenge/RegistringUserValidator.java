@@ -4,20 +4,24 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-public class RegistringUserValidator implements Validator {
+public class RegistringUserValidator implements Validator
+{
     private PidginRepository repo;
 
-    public RegistringUserValidator(PidginRepository repo) {
+    public RegistringUserValidator(PidginRepository repo)
+    {
         this.repo = repo;
     }
 
     @Override
-    public boolean supports(Class clazz) {
+    public boolean supports(Class clazz)
+    {
         return RegistringUser.class.equals(clazz);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(Object target, Errors errors)
+    {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "login", "required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "required");
@@ -29,13 +33,14 @@ public class RegistringUserValidator implements Validator {
         RegistringUser user = (RegistringUser)target;
         System.out.println(user.getConfirmation() == null);
 
-        if(!user.getPassword().equals(user.getConfirmation())){
+        if(!user.getPassword().equals(user.getConfirmation()))
+        {
             //errors.rejectValue("password", "notmatch.password");
         }
 
-        if(repo.findByLogin(user.getLogin()) != null) {
+        if(repo.findByLogin(user.getLogin()) != null)
+        {
             errors.rejectValue("login", "alreadyused.login");
         }
     }
 }
-
