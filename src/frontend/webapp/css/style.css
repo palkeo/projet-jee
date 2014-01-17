@@ -708,7 +708,7 @@ header {
   color: white;
   padding: 20px;
 }
-header form {
+#header-topright {
   float: right;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
@@ -721,46 +721,49 @@ header form {
   margin-bottom: 12px;
   line-height: 1em;
 }
-header form div div {
+#header-topright form {
+  margin-bottom: 0;
+}
+#header-topright div div {
   margin: 1px 0 0 295px;
 }
-header form div {
+#header-topright div {
   font-size: 13px;
 }
-header form a {
+#header-topright a {
   color: #33ADFF;
   text-decoration: none;
 }
-header form #header-connect-pseudo,
-header form #header-connect-pass {
+#header-topright #header-connect-pseudo,
+#header-topright #header-connect-pass {
   width: 140px;
   background-color: #F5F5F5;
 }
-header form #header-connect-submit {
+#header-topright #header-connect-submit {
   background-color: #C5C5C5;
   background-image: linear-gradient(#eeeeee, #afafaf);
 }
-header form #header-mdp-oublie {
+#header-topright #header-mdp-oublie {
   margin-left: 45px;
 }
-header form #header-moncompte-pseudo {
+#header-topright #header-moncompte-pseudo {
   text-align: center;
 }
-header form input {
+#header-topright input {
   display: inline-block !important;
   padding: 0.3em !important;
   margin: 1px !important;
 }
 @media all and (max-width: 600px) {
-  header form {
+  #header-topright {
     border-radius: 5px;
   }
-  header form #header-mdp-oublie,
-  header form div div {
+  #header-topright #header-mdp-oublie,
+  #header-topright div div {
     margin: 0;
     display: block;
   }
-  header form input {
+  #header-topright input {
     display: block !important;
     margin: auto;
   }
@@ -1113,8 +1116,8 @@ div#graph_presets {
   box-sizing: border-box;
   display: inline;
   float: left;
-  width: 41.66666666666667%;
+  width: 50%;
   padding: 0 20px;
-  *width: 37.121212121212125%;
+  *width: 45.45454545454545%;
   *padding: 0 19.954545454545453px;
 }
