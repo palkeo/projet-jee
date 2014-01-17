@@ -91,10 +91,10 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
         int firstCheckedCol = Math.max(0, lastPlayedCol-3);
         for(int i = firstCheckedCol; i < firstCheckedCol+4; ++i) {
             try {
-                if(cols.get(lastPlayedCol-3+i).get(lastPlayedLine) == me
-                && cols.get(lastPlayedCol-2+i).get(lastPlayedLine) == me
-                && cols.get(lastPlayedCol-1+i).get(lastPlayedLine) == me
-                && cols.get(lastPlayedCol-0+i).get(lastPlayedLine) == me
+                if(cols.get(i+0).get(lastPlayedLine) == me
+                && cols.get(i+1).get(lastPlayedLine) == me
+                && cols.get(i+2).get(lastPlayedLine) == me
+                && cols.get(i+3).get(lastPlayedLine) == me
                 ) {
                     return true;
                 }
@@ -106,10 +106,10 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
         int firstCheckedLine = Math.max(0, lastPlayedLine-3);
         for(int i = firstCheckedLine; i < firstCheckedLine+4; ++i) {
             try {
-                if(cols.get(lastPlayedCol).get(lastPlayedLine-3+i) == me
-                && cols.get(lastPlayedCol).get(lastPlayedLine-2+i) == me
-                && cols.get(lastPlayedCol).get(lastPlayedLine-1+i) == me
-                && cols.get(lastPlayedCol).get(lastPlayedLine-0+i) == me
+                if(cols.get(lastPlayedCol).get(i+0) == me
+                && cols.get(lastPlayedCol).get(i+1) == me
+                && cols.get(lastPlayedCol).get(i+2) == me
+                && cols.get(lastPlayedCol).get(i+3) == me
                 ) {
                     return true;
                 }
@@ -121,7 +121,7 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
         for(int i = 0; i < colNumber-4; ++i) {
             for(int j = 0; j < lineNumber-4; ++j) {
                 try {
-                    if(cols.get(i).get(j) == me
+                    if(cols.get(i+0).get(j+0) == me
                     && cols.get(i+1).get(j+1) == me
                     && cols.get(i+2).get(j+2) == me
                     && cols.get(i+3).get(j+3) == me
@@ -137,7 +137,7 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
         for(int i = 3; i < colNumber; ++i) {
             for(int j = 0; j < lineNumber-4; ++j) {
                 try {
-                    if(cols.get(i).get(j) == me
+                    if(cols.get(i+0).get(j+0) == me
                     && cols.get(i-1).get(j+1) == me
                     && cols.get(i-2).get(j+2) == me
                     && cols.get(i-3).get(j+3) == me
