@@ -123,7 +123,7 @@ public class Worker
                     return;
                 }
 
-                log.info(String.format("%s -- %s vs %s", rs.getString("game_name"), rs.getString("ai1_name"), rs.getString("ai2_name")));
+                log.info(String.format("%s - %s vs %s", rs.getString("game_name"), rs.getString("ai1_name"), rs.getString("ai2_name")));
 
                 // save match state (running) and worker
                 ps = dbConnection.prepareStatement("UPDATE match SET state=1, worker=? WHERE id=?");
@@ -193,6 +193,7 @@ public class Worker
 
                         try
                         {
+                            log.info(String.format("extracting archive %s", archiveExtractDir));
                             p = pb.start();
                             p.waitFor();
                         }
@@ -239,11 +240,12 @@ public class Worker
                     }
 
                     // launch it
-                    ProcessBuilder pb = new ProcessBuilder("bash", launch.getAbsolutePath());
-                    pb.directory(new File(config.getExtractDirectory()));
+                    ProcessBuilder pb = new ProcessBuilder("bash", launch.getAbsolutePath(), "localhost", String.valueOf(config.getGameServerPort()));
+                    pb.directory(launch.getParentFile());
 
                     try
                     {
+                        log.info(String.format("running %s localhost %d", launch.getAbsolutePath(), config.getGameServerPort()));
                         playerProcesses[i] = pb.start();
                     }
                     catch(IOException e) {
@@ -267,6 +269,8 @@ public class Worker
                 // generate match
                 try
                 {
+                    saveTurn(matchId, 0, gameEngine.getState());
+
                     while(winner == null)
                     {
                         int currentPlayer = gameEngine.getCurrentPlayer();
@@ -287,6 +291,7 @@ public class Worker
                             {
                                 winner = gameEngine.getScore(0) > gameEngine.getScore(1) ? 0 : 1;
                             }
+                            saveTurn(matchId, gameEngine.getCurrentTurn(), gameEngine.getState());
                         }
                         catch(InvalidMoveException e) {
                             log.info(String.format("Error: %s", e));
@@ -310,15 +315,58 @@ public class Worker
                 {
                     if(s != null)
                     {
-                        try
-                        {
+                        try {
                             s.close();
                         }
                         catch(IOException e) {}
                     }
                 }
 
-                log.info(String.format("IA %s win !", rs.getString("ai" + winner + "_name")));
+                // save results
+                log.info(String.format("AI %s won", rs.getString("ai" + (winner+1) + "_name")));
+                ps = dbConnection.prepareStatement("UPDATE match SET score1=?, score2=?, state=2 WHERE id=?");
+                ps.setInt(1, gameEngine.getScore(0));
+                ps.setInt(2, gameEngine.getScore(1));
+                ps.setInt(3, matchId);
+                ps.executeUpdate();
+
+                // update elo
+                if(rs.getInt("ai1_id") != rs.getInt("ai2_id"))
+                {
+                    int d = rs.getInt("ai1_elo") - rs.getInt("ai2_elo");
+
+                    for(i=0; i<=1; i++)
+                    {
+                        // count matches
+                        int id = rs.getInt("ai" + (i+1) + "_id");
+                        ps = dbConnection.prepareStatement("SELECT COUNT(*) FROM match WHERE (ai1=? OR ai2=?) AND state=2");
+                        ps.setInt(1, id);
+                        ps.setInt(2, id);
+                        ResultSet count = ps.executeQuery();
+                        count.next();
+                        int nbMatches = count.getInt(1);
+
+                        // calculate elo point
+                        int score = gameEngine.getScore(i);
+                        int elo = rs.getInt("ai" + (i+1) + "_elo");
+                        int k = 10;
+
+                        if(nbMatches <= 30)
+                            k = 30;
+                        else if(elo <= 2400)
+                            k = 15;
+
+                        double p = 1.0 / (1.0 + Math.pow(10, - (double)d / 400.0));
+                        elo += (int)((double)k * ((double)score - p));
+                        d = -d;
+
+                        // update db
+                        ps = dbConnection.prepareStatement("UPDATE ai SET elo=? WHERE id=?");
+                        ps.setInt(1, elo);
+                        ps.setInt(2, id);
+                        ps.executeUpdate();
+                    }
+                }
             }
         }
         finally {
@@ -329,6 +377,15 @@ public class Worker
             }
             catch(Throwable ignore) {}
         }
+    }
+
+    public void saveTurn(int matchId, int turnId, JsonNode state) throws SQLException
+    {
+        PreparedStatement ps = dbConnection.prepareStatement("INSERT INTO turn(state, turn, match) VALUES(?, ?, ?)");
+        ps.setString(1, state.toString());
+        ps.setInt(2, turnId);
+        ps.setInt(3, matchId);
+        ps.executeUpdate();
     }
 
     public static InetAddress getLANAddress()
