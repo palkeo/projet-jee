@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import javax.servlet.http.HttpSession;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class PidginController
@@ -45,19 +49,19 @@ public class PidginController
     @RequestMapping(value="/inscription", method=RequestMethod.GET)
     public String inscription(Model model)
     {
-        model.addAttribute("user", new RegisteringUser());
+        model.addAttribute("user", new RegisteringPidgin());
         return "inscription";
     }
 
     @InitBinder("user")
     protected void initBinder(WebDataBinder binder)
     {
-        binder.setValidator(new RegisteringUserValidator(repo));
+        binder.setValidator(new RegisteringPidginValidator(repo));
     }
 
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
     public String inscriptionResult(
-        @ModelAttribute("user") @Valid RegisteringUser user,
+        @ModelAttribute("user") @Valid RegisteringPidgin user,
         BindingResult result,
         Model model,
         RedirectAttributes redirectAttributes)
@@ -80,4 +84,22 @@ public class PidginController
             return "inscription";
         }
     }
+
+    @RequestMapping("/logout")
+    public String logout(
+        Model model,
+        HttpSession session,
+        RedirectAttributes redirectAttributes)
+    {
+        session.invalidate();
+
+        System.out.println(model.asMap().size());
+
+        ArrayList<String> successMessages = new ArrayList<String>();
+        successMessages.add("Vous êtes maintenant déconnecté.");
+        redirectAttributes.addFlashAttribute("successMessages", successMessages);
+
+        return "redirect:/";
+    }
+
 }
