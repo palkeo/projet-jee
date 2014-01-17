@@ -13,7 +13,7 @@ public abstract class AbstractGameEngine {
     }
 
     public int getCurrentPlayer() {
-        return turn%playersNumber;
+        return turn % playersNumber;
     }
 
     public int getCurrentTurn() {
