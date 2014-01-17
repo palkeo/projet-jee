@@ -4,11 +4,11 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-public class RegistringUserValidator implements Validator
+public class RegisteringUserValidator implements Validator
 {
     private PidginRepository repo;
 
-    public RegistringUserValidator(PidginRepository repo)
+    public RegisteringUserValidator(PidginRepository repo)
     {
         this.repo = repo;
     }
@@ -16,7 +16,7 @@ public class RegistringUserValidator implements Validator
     @Override
     public boolean supports(Class clazz)
     {
-        return RegistringUser.class.equals(clazz);
+        return RegisteringUser.class.equals(clazz);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class RegistringUserValidator implements Validator
         //Fixme: for some reason, that one does not work, we always get null
         // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmation", "required");
 
-        RegistringUser user = (RegistringUser)target;
+        RegisteringUser user = (RegisteringUser)target;
         System.out.println(user.getConfirmation() == null);
 
         if(!user.getPassword().equals(user.getConfirmation()))

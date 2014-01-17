@@ -45,19 +45,19 @@ public class PidginController
     @RequestMapping(value="/inscription", method=RequestMethod.GET)
     public String inscription(Model model)
     {
-        model.addAttribute("user", new RegistringUser());
+        model.addAttribute("user", new RegisteringUser());
         return "inscription";
     }
 
     @InitBinder("user")
     protected void initBinder(WebDataBinder binder)
     {
-        binder.setValidator(new RegistringUserValidator(repo));
+        binder.setValidator(new RegisteringUserValidator(repo));
     }
 
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
     public String inscriptionResult(
-        @ModelAttribute("user") @Valid RegistringUser user,
+        @ModelAttribute("user") @Valid RegisteringUser user,
         BindingResult result,
         Model model,
         RedirectAttributes redirectAttributes)
