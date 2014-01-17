@@ -1107,3 +1107,14 @@ div#graph_presets {
   font-size: 10px;
   color: grey;
 }
+.accueil_colonne {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: inline;
+  float: left;
+  width: 50%;
+  padding: 0 20px;
+  *width: 45.45454545454545%;
+  *padding: 0 19.954545454545453px;
+}
