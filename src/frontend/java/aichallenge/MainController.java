@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.PageRequest;
 
 @Controller
 public class MainController
@@ -21,6 +24,8 @@ public class MainController
     private PidginRepository pidginRepo;
     @Autowired
     private GameRepository gameRepo;
+    @Autowired
+    private MatchRepository matchRepo;
 
     @Autowired
     private PidginInfo pidginInfo;
@@ -35,6 +40,7 @@ public class MainController
     public String home(Model model)
     {
         model.addAttribute("games", gameRepo.findAll());
+        model.addAttribute("matchs", matchRepo.findAll(new PageRequest(1, 20, new Sort(Direction.DESC, "id"))));
         return "home";
     }
 
