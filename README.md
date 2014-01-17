@@ -20,6 +20,13 @@ Running a JMS server
 * Run `cd apache-activemq-5.9.0`
 * Launch ActiveMQ server with `bin/activemq start`
 
+In case of a problem with the table 'turn'
+------------------------------------------
+`psql -U aichallenge -h viod.eu`
+`drop table turn;`
+`create table turn (id serial not null, state character varying(255), turn integer not null, match bigint`
+`alter table only turn add constraint fk_f188a422a39e4aaea90ed0c95c9 foreign key (match) references match(id);`
+
 Dependencies
 ------------
 * Gradle: available on AUR
