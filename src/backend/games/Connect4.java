@@ -137,7 +137,7 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
         for(int i = 3; i < colNumber; ++i) {
             for(int j = 0; j < lineNumber-4; ++j) {
                 try {
-                    if(cols.get(i+0).get(j+0) == me
+                    if(cols.get(i-0).get(j+0) == me
                     && cols.get(i-1).get(j+1) == me
                     && cols.get(i-2).get(j+2) == me
                     && cols.get(i-3).get(j+3) == me
