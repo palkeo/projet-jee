@@ -81,11 +81,73 @@ public class Connect4 extends AbstractGameEngine implements GameEngine {
         return player == winner ? 1 : 0;
     }
 
-    private boolean hasWon(int lastCol) {
-        int line = cols.get(lastCol).size()-1;
-        int me = cols.get(lastCol).get(line);
+    private boolean hasWon(int lastPlayedCol) {
+        int lastPlayedLine = cols.get(lastPlayedCol).size()-1;
+        int me = cols.get(lastPlayedCol).get(lastPlayedLine);
 
-        // todo: find an elegant way to check whether we won or not
+        // how ugly is that?
+
+        // check horizontal
+        int firstCheckedCol = Math.max(0, lastPlayedCol-3);
+        for(int i = firstCheckedCol; i < firstCheckedCol+4; ++i) {
+            try {
+                if(cols.get(lastPlayedCol-3+i).get(lastPlayedLine) == me
+                && cols.get(lastPlayedCol-2+i).get(lastPlayedLine) == me
+                && cols.get(lastPlayedCol-1+i).get(lastPlayedLine) == me
+                && cols.get(lastPlayedCol-0+i).get(lastPlayedLine) == me
+                ) {
+                    return true;
+                }
+            }
+            catch(IndexOutOfBoundsException e) {}
+        }
+
+        // check vertical
+        int firstCheckedLine = Math.max(0, lastPlayedLine-3);
+        for(int i = firstCheckedLine; i < firstCheckedLine+4; ++i) {
+            try {
+                if(cols.get(lastPlayedCol).get(lastPlayedLine-3+i) == me
+                && cols.get(lastPlayedCol).get(lastPlayedLine-2+i) == me
+                && cols.get(lastPlayedCol).get(lastPlayedLine-1+i) == me
+                && cols.get(lastPlayedCol).get(lastPlayedLine-0+i) == me
+                ) {
+                    return true;
+                }
+            }
+            catch(IndexOutOfBoundsException e) {}
+        }
+
+        // check /
+        for(int i = 0; i < colNumber-4; ++i) {
+            for(int j = 0; j < lineNumber-4; ++j) {
+                try {
+                    if(cols.get(i).get(j) == me
+                    && cols.get(i+1).get(j+1) == me
+                    && cols.get(i+2).get(j+2) == me
+                    && cols.get(i+3).get(j+3) == me
+                    ) {
+                        return true;
+                    }
+                }
+                catch(IndexOutOfBoundsException e) {}
+            }
+        }
+
+        // check \
+        for(int i = 3; i < colNumber; ++i) {
+            for(int j = 0; j < lineNumber-4; ++j) {
+                try {
+                    if(cols.get(i).get(j) == me
+                    && cols.get(i-1).get(j+1) == me
+                    && cols.get(i-2).get(j+2) == me
+                    && cols.get(i-3).get(j+3) == me
+                    ) {
+                        return true;
+                    }
+                }
+                catch(IndexOutOfBoundsException e) {}
+            }
+        }
 
         return false;
     }
