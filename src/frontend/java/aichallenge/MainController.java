@@ -1,17 +1,18 @@
 package aichallenge;
 
+import java.util.ArrayList;
+import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MainController
@@ -21,7 +22,7 @@ public class MainController
     @Autowired
     private PidginInfo pidginInfo; 
 
-    @ModelAttribute("current_user")
+    @ModelAttribute("currentUser")
     public Pidgin getUser()
     {
         return pidginInfo.getCurrentUser();
@@ -33,29 +34,49 @@ public class MainController
         return "home";
     }
 
+    @RequestMapping(value="/disconnect", method=RequestMethod.GET)
+    public String disconnect(Model model, RedirectAttributes redirectAttributes)
+    {
+        pidginInfo.setCurrentUser(null);
+        ArrayList<String> successMessages = new ArrayList<String>();
+        successMessages.add("Vous êtes maintenant déconnecté.");
+        //todo:messages:successMessages.add(messageSource.getMessage("disconnected", null, null));
+        redirectAttributes.addFlashAttribute("successMessages", successMessages);
+        return "redirect:/";
+    }
+
     @RequestMapping(value="/", method=RequestMethod.POST)
     public String home(
         @RequestParam("username") String login,
         @RequestParam("password") String password,
-        Model model)
+        Model model,
+        RedirectAttributes redirectAttributes)
     {
         ArrayList<String> errorMessages = new ArrayList<String>();
         ArrayList<String> successMessages = new ArrayList<String>();
 
         Pidgin user = repo.findByLogin(login);
         if(user == null)
-            errorMessages.add("Cet utilisateur n'existe pas.");
+        {
+            //todo:messages:errorMessages.add(messageSource.getMessage("unknown.user", new Object[]{login}, null));
+            errorMessages.add("Utilisateur inconnu " + login + ".");
+        }
         else if(!Pidgin.md5(password).equals(user.getEncryptedPassword()))
-            errorMessages.add("Le mot de passe que vous avez entré est incorrect.");
+        {
+            //todo:messages:errorMessages.add(messageSource.getMessage("incorrect.password", null, null));
+            errorMessages.add("Mot de passe incorrect.");
+        }
         else
         {
             pidginInfo.setCurrentUser(user);
-            successMessages.add("Vous êtes maintenant connecté en tant que " + login + ".");
+            //todo:messages:successMessages.add(messageSource.getMessage("connected", null, null));
+            successMessages.add("Vous êtes maintenant connectés.");
         }
 
-        model.addAttribute("errorMessages", errorMessages);
-        model.addAttribute("successMessages", successMessages);
+        redirectAttributes.addFlashAttribute("errorMessages", errorMessages);
+        redirectAttributes.addFlashAttribute("successMessages", successMessages);
 
-        return "home";
+        return "redirect:/";
     }
 }
+
