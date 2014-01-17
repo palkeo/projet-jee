@@ -2,16 +2,16 @@ package aichallenge;
 
 import javax.validation.constraints.NotNull;
 
-public class RegistringUser {
+public class RegisteringUser {
     @NotNull private String login;
     @NotNull private String password;
     @NotNull private String confirmation;
     @NotNull private String firstName;
     @NotNull private String lastName;
 
-    protected RegistringUser() {}
+    protected RegisteringUser() {}
 
-    public RegistringUser(String login, String password, String confirmation, String firstName, String lastName) {
+    public RegisteringUser(String login, String password, String confirmation, String firstName, String lastName) {
         this.login = login;
         this.password = password;
         this.confirmation = confirmation;

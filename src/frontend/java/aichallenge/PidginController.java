@@ -1,24 +1,23 @@
 package aichallenge;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.WebDataBinder;
-import javax.validation.Valid;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PidginController
@@ -29,7 +28,7 @@ public class PidginController
     @Autowired
     private PidginInfo pidginInfo;
 
-    @ModelAttribute("current_user")
+    @ModelAttribute("currentUser")
     public Pidgin getUser()
     {
         return pidginInfo.getCurrentUser();
@@ -46,33 +45,39 @@ public class PidginController
     @RequestMapping(value="/inscription", method=RequestMethod.GET)
     public String inscription(Model model)
     {
-        model.addAttribute("user", new RegistringUser());
+        model.addAttribute("user", new RegisteringUser());
         return "inscription";
     }
 
     @InitBinder("user")
     protected void initBinder(WebDataBinder binder)
     {
-        binder.setValidator(new RegistringUserValidator(repo));
+        binder.setValidator(new RegisteringUserValidator(repo));
     }
 
     @RequestMapping(value="/inscription", method=RequestMethod.POST)
-    public String inscriptionResult(@ModelAttribute("user") @Valid RegistringUser user, BindingResult result, Model model)
+    public String inscriptionResult(
+        @ModelAttribute("user") @Valid RegisteringUser user,
+        BindingResult result,
+        Model model,
+        RedirectAttributes redirectAttributes)
     {
-        if(!result.hasErrors()) {
+        if(!result.hasErrors())
+        {
             repo.save(user.toPidgin());
 
             ArrayList<String> successMessages = new ArrayList<String>();
             successMessages.add("L'inscription s'est déroulée avec succès. " +
                                 "Vous pouvez dès à présent vous connecter a" +
                                 "vec les identifiants que vous avez choisis.");
-            model.addAttribute("successMessages", successMessages);
-            return "home";
+            redirectAttributes.addFlashAttribute("successMessages", successMessages);
+
+            return "redirect:/";
         }
-        else {
+        else
+        {
             model.addAttribute("user", user);
             return "inscription";
         }
     }
 }
-
