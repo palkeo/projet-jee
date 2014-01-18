@@ -4,6 +4,8 @@
     <meta th:substituteby="layout :: charset" />
     <meta th:substituteby="layout :: viewport" />
     <link th:substituteby="layout :: stylesheet" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <title>Affichage d'un match</title>
   </head>
   <body>
@@ -16,6 +18,16 @@
         <div th:substituteby="layout :: success_messages"></div>
 
         <p th:text="${match}">...</p>
+
+        <script th:text="${javascript}" type="text/javascript">var turns = [];</script>
+        <script type="text/javascript" src="/puissance4.js"></script>
+
+        <table id="game"></table>
+
+        <p>
+        <a href="javascript:previous();">previous</a> | <a href="javascript:next();">next</a>
+        </p>
+
 
       </div>
     </div>

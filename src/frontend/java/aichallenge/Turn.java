@@ -25,4 +25,6 @@ public class Turn
     {
         return "Turn(" + this.match + ", " + this.turn + ", " + this.state + ")";
     }
+
+    public String getState() { return this.state; }
 }

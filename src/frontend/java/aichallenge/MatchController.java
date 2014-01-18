@@ -41,7 +41,19 @@ public class MatchController
     @RequestMapping("/matchs/{id}")
     public String matchDisplay(@PathVariable Long id, Model model)
     {
-        model.addAttribute("match", repo.findById(id));
+        Match match = repo.findById(id);
+        model.addAttribute("match", match);
+
+        // Warning : Quick n'dirty. Feel free to improve. Or not :D
+        String javascript = "var turns = [";
+        for(Turn i : match.getTurns())
+        {
+            javascript = javascript + i.getState() + ",";
+        }
+        javascript = javascript + "];";
+
+        model.addAttribute("javascript", javascript);
+
         return "match";
     }
 

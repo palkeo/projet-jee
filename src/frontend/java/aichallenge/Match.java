@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
+import javax.persistence.OneToMany;
+import java.util.List;
+import javax.persistence.OrderBy;
 
 @Entity
 public class Match
@@ -40,6 +43,10 @@ public class Match
     @Enumerated(EnumType.ORDINAL)
     private State state;
 
+    @OneToMany(mappedBy="match")
+    @OrderBy("turn ASC")
+    private List<Turn> turns;
+
     @Override
     public String toString()
     {
@@ -47,4 +54,6 @@ public class Match
     }
 
     public long getId() { return this.id; }
+    public List<Turn> getTurns() { return this.turns; }
+    public Game getGame() { return this.game; }
 }
