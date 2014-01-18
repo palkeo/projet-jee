@@ -32,6 +32,7 @@ public class Match
     private Game game;
 
     private String worker;
+    private String error;
 
     public enum State
     {
@@ -50,10 +51,12 @@ public class Match
     @Override
     public String toString()
     {
-        return "Match(" + this.ai1 + ", " + this.score1 + ", " + this.ai2 + ", " + this.score2 + ", " + this.game + ", " + this.worker + ", " + this.state + ")";
+        return "Match(" + this.ai1 + ", " + this.score1 + ", " + this.ai2 + ", " + this.score2 + ", " + this.game + ", " + this.worker + ", " + this.error + ", " + this.state + ")";
     }
 
     public long getId() { return this.id; }
     public List<Turn> getTurns() { return this.turns; }
     public Game getGame() { return this.game; }
+    public String getWorker() { return this.worker; }
+    public String getError() { return this.error; }
 }

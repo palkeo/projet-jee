@@ -15,8 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import backend.InvalidMoveException;
-import backend.AI;
+import backend.*;
 
 public class Worker
 {
@@ -148,12 +147,12 @@ public class Worker
                 if(!extractArchive(ais[0]) || !extractArchive(ais[1]))
                     return;
 
-                // launch IAs
+                // launch AIs
                 if(!launch(ais[0]) || !launch(ais[1]))
                     return;
 
                 // generate match
-                int winner = generateMatch(gameEngine, matchId, ais);
+                MatchResult result = generateMatch(gameEngine, matchId, ais);
 
                 // finish
                 for(int i=0; i<=1; i++)
@@ -163,9 +162,9 @@ public class Worker
                 }
 
                 // save results
-                log.info(String.format("AI %s won", ais[winner].getName()));
-                saveResult(gameEngine, matchId);
-                saveElo(winner, ais);
+                log.info(String.format("AI %s won", ais[result.getWinner()].getName()));
+                saveResult(gameEngine, result, matchId);
+                saveElo(result.getWinner(), ais);
             }
         }
         finally {
@@ -304,7 +303,7 @@ public class Worker
         ps.executeUpdate();
     }
 
-    private int generateMatch(GameEngine gameEngine, int matchId, AI[] ais) throws SQLException
+    private MatchResult generateMatch(GameEngine gameEngine, int matchId, AI[] ais) throws SQLException
     {
         Integer winner = null;
         int currentPlayer = gameEngine.getCurrentPlayer();
@@ -335,18 +334,24 @@ public class Worker
         }
         catch(IOException | InvalidMoveException e) {
             log.info(String.format("Error: %s", e));
-            return currentPlayer == 0 ? 1 : 0;
+            return new MatchResult(currentPlayer == 0 ? 1 : 0, e);
         }
 
-        return winner.intValue();
+        return new MatchResult(winner.intValue(), null);
     }
 
-    private void saveResult(GameEngine gameEngine, int matchId) throws SQLException
+    private void saveResult(GameEngine gameEngine, MatchResult result, int matchId) throws SQLException
     {
-        PreparedStatement ps = dbConnection.prepareStatement("UPDATE match SET score1=?, score2=?, state=2 WHERE id=?");
+        PreparedStatement ps = dbConnection.prepareStatement("UPDATE match SET score1=?, score2=?, state=2, error=? WHERE id=?");
         ps.setInt(1, gameEngine.getScore(0));
         ps.setInt(2, gameEngine.getScore(1));
-        ps.setInt(3, matchId);
+
+        if(result.getError() != null)
+            ps.setString(3, result.getError().getMessage());
+        else
+            ps.setString(3, null);
+
+        ps.setInt(4, matchId);
         ps.executeUpdate();
     }
 
