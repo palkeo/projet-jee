@@ -20,7 +20,7 @@
         <p th:text="${match}">...</p>
 
         <script th:text="${javascript}" type="text/javascript">var turns = [];</script>
-        <script type="text/javascript" src="/puissance4.js"></script>
+        <script type="text/javascript" th:src="'/js/games/' + ${match.game.jsReplayer}"></script>
 
         <table id="game"></table>
 

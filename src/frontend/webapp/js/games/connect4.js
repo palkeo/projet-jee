@@ -11,7 +11,7 @@ function display()
         var tr = $('<tr>');
         for(var j = 0; j < columns; j++)
         {
-            var td = $('<td>');
+            var td = $('<td width="14.28%">');
             td.html((i < data[j].length) ? data[j][i] : '');
             tr.append(td);
         }

@@ -20,22 +20,26 @@ public class Game
 
     private String className;
 
+    private String jsReplayer;
+
     @OneToMany(mappedBy="game")
     private Set<AI> AIs;
 
     @Override
     public String toString()
     {
-        return "Game(" + this.name + ", " + this.description + ", " + this.className + ")";
+        return "Game(" + this.name + ", " + this.description + ", " + this.className + ", " + this.jsReplayer + ")";
     }
 
     public String getName() { return this.name; }
     public long getId() { return this.id; }
     public String getDescription() { return this.description; }
     public String getClassName() { return this.className; }
+    public String getJsReplayer() { return this.jsReplayer; }
     public Set<AI> getAIs() { return AIs; }
 
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
     public void setClassName(String className) { this.className = className; }
+    public void setJsReplayer(String jsReplayer) { this.jsReplayer = jsReplayer; }
 }
