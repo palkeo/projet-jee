@@ -10,15 +10,13 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import java.net.*;
 import java.io.IOException;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.UnsupportedEncodingException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import backend.InvalidMoveException;
+import backend.AI;
 
 public class Worker
 {
@@ -84,7 +82,7 @@ public class Worker
             config.getGameServerPort()));
     }
 
-    public void run() throws SQLException, JMSException
+    public void run() throws SQLException, JMSException, IOException
     {
         log.info("Running worker");
 
@@ -123,250 +121,51 @@ public class Worker
                     return;
                 }
 
-                log.info(String.format("%s - %s vs %s", rs.getString("game_name"), rs.getString("ai1_name"), rs.getString("ai2_name")));
+                String gameName = rs.getString("game_name");
+                String gameClass = rs.getString("class_name");
+                AI[] ais = {
+                    new AI(rs.getInt("ai1_id"), rs.getString("ai1_name"), rs.getString("ai1_filename"), rs.getInt("ai1_elo")),
+                    new AI(rs.getInt("ai2_id"), rs.getString("ai2_name"), rs.getString("ai2_filename"), rs.getInt("ai2_elo")),
+                };
+
+                log.info(String.format("%s - %s vs %s", gameName, ais[0].getName(), ais[1].getName()));
 
                 // save match state (running) and worker
-                ps = dbConnection.prepareStatement("UPDATE match SET state=1, worker=? WHERE id=?");
-                ps.setString(1, String.format("%s:%d",
-                    getLANAddress() == null ? socket.getInetAddress().getHostName() : getLANAddress().getHostName(),
-                    socket.getLocalPort()));
-                ps.setInt(2, matchId);
-                ps.executeUpdate();
+                saveMatchRunning(matchId);
 
-                // instanciate game engine
-                Class<?> gameEngineClass = null;
+                // instantiate game engine
                 GameEngine gameEngine = null;
-
                 try
                 {
-                    gameEngineClass = Class.forName(rs.getString("class_name"));
+                    gameEngine = instantiateGameEngine(gameClass);
                 }
-                catch(ClassNotFoundException e) {
-                    log.info(String.format("Error: %s", e));
-                    return;
-                }
-
-                try
-                {
-                    gameEngine = (GameEngine) gameEngineClass.newInstance();
-                }
-                catch(InstantiationException | IllegalAccessException e) {
+                catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                     log.info(String.format("Error: cannot instanciate game engine : %s", e));
                     return;
                 }
 
                 // check and extract archives
-                String[] aiFilenames = {rs.getString("ai1_filename"), rs.getString("ai2_filename")};
-
-                for(String filename : aiFilenames)
-                {
-                    String archive = config.getPlayersDirectory() + filename;
-                    String archiveExtractDir = config.getExtractDirectory() + filename;
-                    String aiDirectory = config.getExtractDirectory() + FilenameUtils.removeExtension(FilenameUtils.removeExtension(filename));
-
-                    // check archive
-                    File archiveFile = new File(archive);
-                    if(!archiveFile.isFile())
-                    {
-                        log.info(String.format("Error: cannot find archive %s", archive));
-                        return;
-                    }
-
-                    // copy to extract directory
-                    File archiveExtractDirFile = new File(archiveExtractDir);
-                    try
-                    {
-                        FileUtils.copyFile(archiveFile, archiveExtractDirFile);
-                    }
-                    catch(IOException e) {
-                        log.info(String.format("Error: cannot copy archive %s to %s : %s", archive, archiveExtractDir, e));
-                        return;
-                    }
-
-                    // extract archive
-                    File aiDirectoryFile = new File(aiDirectory);
-                    if(!aiDirectoryFile.isDirectory())
-                    {
-                        aiDirectoryFile.mkdir();
-                        ProcessBuilder pb = new ProcessBuilder("tar", "xf", archiveExtractDir, "-C", aiDirectory);
-                        Process p = null;
-
-                        try
-                        {
-                            log.info(String.format("extracting archive %s", archiveExtractDir));
-                            p = pb.start();
-                            p.waitFor();
-                        }
-                        catch(IOException | InterruptedException e) {
-                            log.info(String.format("Error: cannot extract archive %s : %s", archive, e));
-                            return;
-                        }
-
-                        if(p.exitValue() != 0)
-                        {
-                            log.info(String.format("Error: cannot extract archive %s (tar returned error code : %d)", archive, p.exitValue()));
-                            return;
-                        }
-                    }
-                }
+                if(!extractArchive(ais[0]) || !extractArchive(ais[1]))
+                    return;
 
                 // launch IAs
-                Process[] playerProcesses = {null, null};
-                Socket[] playerSockets = {null, null};
-                BufferedReader[] playerReaders = {null, null};
-                int i = 0;
-                Integer winner = null;
-
-                for(String filename : aiFilenames)
-                {
-                    // search launch file
-                    String aiDirectory = config.getExtractDirectory() + FilenameUtils.removeExtension(FilenameUtils.removeExtension(filename));
-                    File aiDirectoryFile = new File(aiDirectory);
-                    File launch = new File(aiDirectory + "/launch");
-
-                    if(!launch.isFile())
-                    {
-                        List<File> files = (List<File>) FileUtils.listFilesAndDirs(aiDirectoryFile, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-                        if(files.size() == 1 && files.get(0).isDirectory())
-                        {
-                            launch = new File(aiDirectory + "/" + files.get(0).getName() + "/launch");
-                        }
-                    }
-
-                    if(!launch.isFile())
-                    {
-                        log.info(String.format("Error: cannot find launch file for ai %s", filename));
-                        return;
-                    }
-
-                    // launch it
-                    ProcessBuilder pb = new ProcessBuilder("bash", launch.getAbsolutePath(), "localhost", String.valueOf(config.getGameServerPort()));
-                    pb.directory(launch.getParentFile());
-
-                    try
-                    {
-                        log.info(String.format("running %s localhost %d", launch.getAbsolutePath(), config.getGameServerPort()));
-                        playerProcesses[i] = pb.start();
-                    }
-                    catch(IOException e) {
-                        log.info(String.format("Error: cannot start AI %s : %s", launch.getAbsolutePath(), e));
-                        return;
-                    }
-
-                    try
-                    {
-                        playerSockets[i] = socket.accept();
-                        playerReaders[i] = new BufferedReader(new InputStreamReader(playerSockets[i].getInputStream(), "ISO-8859-1"));
-                    }
-                    catch(IOException e) {
-                        log.info(String.format("Error: %s", e));
-                        return;
-                    }
-
-                    i++;
-                }
+                if(!launch(ais[0]) || !launch(ais[1]))
+                    return;
 
                 // generate match
-                try
-                {
-                    saveTurn(matchId, 0, gameEngine.getState());
-
-                    while(winner == null)
-                    {
-                        int currentPlayer = gameEngine.getCurrentPlayer();
-                        Socket s = playerSockets[currentPlayer];
-
-                        // send state
-                        String gameState = gameEngine.getState() + "\n";
-                        s.getOutputStream().write(gameState.getBytes("ISO-8859-1"));
-
-                        // receive move
-                        String line = playerReaders[currentPlayer].readLine();
-                        ObjectMapper mapper = new ObjectMapper();
-                        JsonNode move = mapper.readTree(line);
-
-                        try
-                        {
-                            if(gameEngine.play(move))
-                            {
-                                winner = gameEngine.getScore(0) > gameEngine.getScore(1) ? 0 : 1;
-                            }
-                            saveTurn(matchId, gameEngine.getCurrentTurn(), gameEngine.getState());
-                        }
-                        catch(InvalidMoveException e) {
-                            log.info(String.format("Error: %s", e));
-                            winner = currentPlayer == 0 ? 1 : 0;
-                        }
-                    }
-                }
-                catch(IOException e) {
-                    log.info(String.format("Error: %s", e));
-                    return;
-                }
+                int winner = generateMatch(gameEngine, matchId, ais);
 
                 // finish
-                for(Process p : playerProcesses)
+                for(int i=0; i<=1; i++)
                 {
-                    if(p != null)
-                        p.destroy();
-                }
-
-                for(Socket s : playerSockets)
-                {
-                    if(s != null)
-                    {
-                        try {
-                            s.close();
-                        }
-                        catch(IOException e) {}
-                    }
+                    ais[i].killProcess();
+                    ais[i].killProcess();
                 }
 
                 // save results
-                log.info(String.format("AI %s won", rs.getString("ai" + (winner+1) + "_name")));
-                ps = dbConnection.prepareStatement("UPDATE match SET score1=?, score2=?, state=2 WHERE id=?");
-                ps.setInt(1, gameEngine.getScore(0));
-                ps.setInt(2, gameEngine.getScore(1));
-                ps.setInt(3, matchId);
-                ps.executeUpdate();
-
-                // update elo
-                if(rs.getInt("ai1_id") != rs.getInt("ai2_id"))
-                {
-                    int d = rs.getInt("ai1_elo") - rs.getInt("ai2_elo");
-
-                    for(i=0; i<=1; i++)
-                    {
-                        // count matches
-                        int id = rs.getInt("ai" + (i+1) + "_id");
-                        ps = dbConnection.prepareStatement("SELECT COUNT(*) FROM match WHERE (ai1=? OR ai2=?) AND state=2");
-                        ps.setInt(1, id);
-                        ps.setInt(2, id);
-                        ResultSet count = ps.executeQuery();
-                        count.next();
-                        int nbMatches = count.getInt(1);
-
-                        // calculate elo point
-                        int score = gameEngine.getScore(i);
-                        int elo = rs.getInt("ai" + (i+1) + "_elo");
-                        int k = 10;
-
-                        if(nbMatches <= 30)
-                            k = 30;
-                        else if(elo <= 2400)
-                            k = 15;
-
-                        double p = 1.0 / (1.0 + Math.pow(10, - (double)d / 400.0));
-                        elo += (int)((double)k * ((double)score - p));
-                        d = -d;
-
-                        // update db
-                        ps = dbConnection.prepareStatement("UPDATE ai SET elo=? WHERE id=?");
-                        ps.setInt(1, elo);
-                        ps.setInt(2, id);
-                        ps.executeUpdate();
-                    }
-                }
+                log.info(String.format("AI %s won", ais[winner].getName()));
+                saveResult(gameEngine, matchId);
+                saveElo(gameEngine, ais);
             }
         }
         finally {
@@ -379,13 +178,214 @@ public class Worker
         }
     }
 
-    public void saveTurn(int matchId, int turnId, JsonNode state) throws SQLException
+    private void saveMatchRunning(int matchId) throws SQLException
+    {
+        PreparedStatement ps = dbConnection.prepareStatement("UPDATE match SET state=1, worker=? WHERE id=?");
+        ps.setString(1, String.format("%s:%d",
+            getLANAddress() == null ? socket.getInetAddress().getHostName() : getLANAddress().getHostName(),
+            socket.getLocalPort()));
+        ps.setInt(2, matchId);
+        ps.executeUpdate();
+    }
+
+    public GameEngine instantiateGameEngine(String gameClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException
+    {
+        Class<?> gameEngineClass = Class.forName(gameClass);
+        return (GameEngine) gameEngineClass.newInstance();
+    }
+
+    public boolean extractArchive(AI ai)
+    {
+        String archive = config.getPlayersDirectory() + ai.getFilename();
+        String archiveExtractDir = config.getExtractDirectory() + ai.getFilename();
+        String aiDirectory = config.getExtractDirectory() + FilenameUtils.removeExtension(FilenameUtils.removeExtension(ai.getFilename()));
+
+        // check for archive
+        File archiveFile = new File(archive);
+        if(!archiveFile.isFile())
+        {
+            log.info(String.format("Error: cannot find archive %s of AI %s", archive, ai.getName()));
+            return false;
+        }
+
+        // copy to extract directory
+        File archiveExtractDirFile = new File(archiveExtractDir);
+        try
+        {
+            FileUtils.copyFile(archiveFile, archiveExtractDirFile);
+        }
+        catch(IOException e) {
+            log.info(String.format("Error: cannot copy archive %s to %s : %s", archive, archiveExtractDir, e));
+            return false;
+        }
+
+        // extract archive
+        File aiDirectoryFile = new File(aiDirectory);
+        if(!aiDirectoryFile.isDirectory())
+        {
+            aiDirectoryFile.mkdir();
+            ProcessBuilder pb = new ProcessBuilder("tar", "xf", archiveExtractDir, "-C", aiDirectory);
+            Process p = null;
+
+            try
+            {
+                log.info(String.format("extracting archive %s", archiveExtractDir));
+                p = pb.start();
+                p.waitFor();
+            }
+            catch(IOException | InterruptedException e) {
+                log.info(String.format("Error: cannot extract archive %s : %s", archive, e));
+                return false;
+            }
+
+            if(p.exitValue() != 0)
+            {
+                log.info(String.format("Error: cannot extract archive %s (tar returned error code : %d)", archive, p.exitValue()));
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean launch(AI ai)
+    {
+        String aiDirectory = config.getExtractDirectory() + FilenameUtils.removeExtension(FilenameUtils.removeExtension(ai.getFilename()));
+        File aiDirectoryFile = new File(aiDirectory);
+        File launch = new File(aiDirectory + "/launch");
+
+        if(!launch.isFile())
+        {
+            List<File> files = (List<File>) FileUtils.listFilesAndDirs(aiDirectoryFile, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+            if(files.size() == 1 && files.get(0).isDirectory())
+            {
+                launch = new File(aiDirectory + "/" + files.get(0).getName() + "/launch");
+            }
+        }
+
+        if(!launch.isFile())
+        {
+            log.info(String.format("Error: cannot find launch file for AI %s", ai.getName()));
+            return false;
+        }
+
+        // launch it
+        ProcessBuilder pb = new ProcessBuilder("bash", launch.getAbsolutePath(), "localhost", String.valueOf(config.getGameServerPort()));
+        pb.directory(launch.getParentFile());
+
+        try
+        {
+            log.info(String.format("running %s localhost %d", launch.getAbsolutePath(), config.getGameServerPort()));
+            ai.setProcess(pb.start());
+        }
+        catch(IOException e) {
+            log.info(String.format("Error: cannot start AI %s : %s", launch.getAbsolutePath(), e));
+            return false;
+        }
+
+        try
+        {
+            ai.setSocket(socket.accept());
+        }
+        catch(IOException e) {
+            log.info(String.format("Error: %s", e));
+            return false;
+        }
+
+        return true;
+    }
+
+    private void saveTurn(int matchId, int turnId, JsonNode state) throws SQLException
     {
         PreparedStatement ps = dbConnection.prepareStatement("INSERT INTO turn(state, turn, match) VALUES(?, ?, ?)");
         ps.setString(1, state.toString());
         ps.setInt(2, turnId);
         ps.setInt(3, matchId);
         ps.executeUpdate();
+    }
+
+    private int generateMatch(GameEngine gameEngine, int matchId, AI[] ais) throws SQLException, IOException
+    {
+        Integer winner = null;
+        saveTurn(matchId, 0, gameEngine.getState());
+
+        while(winner == null)
+        {
+            int currentPlayer = gameEngine.getCurrentPlayer();
+            Socket s = ais[currentPlayer].getSocket();
+
+            // send state
+            String gameState = gameEngine.getState() + "\n";
+            s.getOutputStream().write(gameState.getBytes("ISO-8859-1"));
+
+            // receive move
+            String line = ais[currentPlayer].getBufferedReader().readLine();
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode move = mapper.readTree(line);
+
+            try
+            {
+                if(gameEngine.play(move))
+                {
+                    winner = gameEngine.getScore(0) > gameEngine.getScore(1) ? 0 : 1;
+                }
+                saveTurn(matchId, gameEngine.getCurrentTurn(), gameEngine.getState());
+            }
+            catch(InvalidMoveException e) {
+                log.info(String.format("Error: %s", e));
+                winner = currentPlayer == 0 ? 1 : 0;
+            }
+        }
+
+        return winner.intValue();
+    }
+
+    private void saveResult(GameEngine gameEngine, int matchId) throws SQLException
+    {
+        PreparedStatement ps = dbConnection.prepareStatement("UPDATE match SET score1=?, score2=?, state=2 WHERE id=?");
+        ps.setInt(1, gameEngine.getScore(0));
+        ps.setInt(2, gameEngine.getScore(1));
+        ps.setInt(3, matchId);
+        ps.executeUpdate();
+    }
+
+    private void saveElo(GameEngine gameEngine, AI[] ais) throws SQLException
+    {
+        if(ais[0].getId() == ais[1].getId())
+            return;
+
+        int d = ais[0].getElo() - ais[1].getElo();
+
+        for(int i=0; i<=1; i++)
+        {
+            // count matches
+            PreparedStatement ps = dbConnection.prepareStatement("SELECT COUNT(*) FROM match WHERE (ai1=? OR ai2=?) AND state=2");
+            ps.setInt(1, ais[i].getId());
+            ps.setInt(2, ais[i].getId());
+            ResultSet count = ps.executeQuery();
+            count.next();
+            int nbMatches = count.getInt(1);
+
+            // calculate elo point
+            int score = gameEngine.getScore(i);
+            int elo = ais[i].getElo();
+            int k = 10;
+
+            if(nbMatches <= 30)
+                k = 30;
+            else if(elo <= 2400)
+                k = 15;
+
+            double p = 1.0 / (1.0 + Math.pow(10, - (double)d / 400.0));
+            elo += (int)((double)k * ((double)score - p));
+            d = -d;
+
+            // update db
+            ps = dbConnection.prepareStatement("UPDATE ai SET elo=? WHERE id=?");
+            ps.setInt(1, elo);
+            ps.setInt(2, ais[i].getId());
+            ps.executeUpdate();
+        }
     }
 
     public static InetAddress getLANAddress()
