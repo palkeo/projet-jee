@@ -17,6 +17,8 @@ public class AI
 
     private String filename;
 
+    private String description;
+
     @ManyToOne
     private Pidgin pidgin;
 
@@ -28,7 +30,7 @@ public class AI
     @Override
     public String toString()
     {
-        return "AI(" + this.name + ", " + this.filename + ", " + this.pidgin + ", " + this.game + ", " + this.elo + ")";
+        return "AI(" + this.name + ", " + this.filename + ", " + this.description + ", " + this.pidgin + ", " + this.game + ", " + this.elo + ")";
     }
 
     public long getId() { return this.id; }
