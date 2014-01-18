@@ -159,13 +159,13 @@ public class Worker
                 for(int i=0; i<=1; i++)
                 {
                     ais[i].killProcess();
-                    ais[i].killProcess();
+                    ais[i].closeSocket();
                 }
 
                 // save results
                 log.info(String.format("AI %s won", ais[winner].getName()));
                 saveResult(gameEngine, matchId);
-                saveElo(gameEngine, ais);
+                saveElo(winner, ais);
             }
         }
         finally {
@@ -304,37 +304,38 @@ public class Worker
         ps.executeUpdate();
     }
 
-    private int generateMatch(GameEngine gameEngine, int matchId, AI[] ais) throws SQLException, IOException
+    private int generateMatch(GameEngine gameEngine, int matchId, AI[] ais) throws SQLException
     {
         Integer winner = null;
+        int currentPlayer = gameEngine.getCurrentPlayer();
         saveTurn(matchId, 0, gameEngine.getState());
 
-        while(winner == null)
+        try
         {
-            int currentPlayer = gameEngine.getCurrentPlayer();
-            Socket s = ais[currentPlayer].getSocket();
-
-            // send state
-            String gameState = gameEngine.getState() + "\n";
-            s.getOutputStream().write(gameState.getBytes("ISO-8859-1"));
-
-            // receive move
-            String line = ais[currentPlayer].getBufferedReader().readLine();
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode move = mapper.readTree(line);
-
-            try
+            while(winner == null)
             {
+                currentPlayer = gameEngine.getCurrentPlayer();
+                Socket s = ais[currentPlayer].getSocket();
+
+                // send state
+                String gameState = gameEngine.getState() + "\n";
+                s.getOutputStream().write(gameState.getBytes("ISO-8859-1"));
+
+                // receive move
+                String line = ais[currentPlayer].getBufferedReader().readLine();
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode move = mapper.readTree(line);
+
                 if(gameEngine.play(move))
                 {
                     winner = gameEngine.getScore(0) > gameEngine.getScore(1) ? 0 : 1;
                 }
                 saveTurn(matchId, gameEngine.getCurrentTurn(), gameEngine.getState());
             }
-            catch(InvalidMoveException e) {
-                log.info(String.format("Error: %s", e));
-                winner = currentPlayer == 0 ? 1 : 0;
-            }
+        }
+        catch(IOException | InvalidMoveException e) {
+            log.info(String.format("Error: %s", e));
+            return currentPlayer == 0 ? 1 : 0;
         }
 
         return winner.intValue();
@@ -349,7 +350,7 @@ public class Worker
         ps.executeUpdate();
     }
 
-    private void saveElo(GameEngine gameEngine, AI[] ais) throws SQLException
+    private void saveElo(int winner, AI[] ais) throws SQLException
     {
         if(ais[0].getId() == ais[1].getId())
             return;
@@ -367,7 +368,7 @@ public class Worker
             int nbMatches = count.getInt(1);
 
             // calculate elo point
-            int score = gameEngine.getScore(i);
+            int score = winner == i ? 1 : 0;
             int elo = ais[i].getElo();
             int k = 10;
 
