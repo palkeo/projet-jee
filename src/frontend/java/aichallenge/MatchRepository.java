@@ -9,4 +9,5 @@ import org.springframework.data.domain.Page;
 public interface MatchRepository extends PagingAndSortingRepository<Match, Long>
 {
     Page<Match> findAll(Pageable pageable);
+    Match findById(Long id);
 }

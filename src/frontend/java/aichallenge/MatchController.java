@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.PathVariable;
 import javax.servlet.http.HttpSession;
 
 import java.util.ArrayList;
@@ -35,6 +36,13 @@ public class MatchController
         model.addAttribute("matchs", repo.findAll());
 
         return "matchsList";
+    }
+
+    @RequestMapping("/matchs/{id}")
+    public String matchDisplay(@PathVariable Long id, Model model)
+    {
+        model.addAttribute("match", repo.findById(id));
+        return "match";
     }
 
 }

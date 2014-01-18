@@ -85,6 +85,7 @@ public class PidginController
         }
     }
 
+    // FIXME: There is a CSRF here. Fix only if you are time, it's not important at all for such a project...
     @RequestMapping("/logout")
     public String logout(
         Model model,
