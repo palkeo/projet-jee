@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 
@@ -33,8 +34,14 @@ public class GameController
     public String gamesList(Model model)
     {
         model.addAttribute("games", repo.findAll());
-
         return "gamesList";
+    }
+
+    @RequestMapping("/games/{id}")
+    public String gameDisplay(@PathVariable Long id, Model model)
+    {
+        model.addAttribute("game", repo.findById(id));
+        return "game";
     }
 
 }

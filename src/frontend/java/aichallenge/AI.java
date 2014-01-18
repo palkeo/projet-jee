@@ -30,4 +30,6 @@ public class AI
     {
         return "AI(" + this.name + ", " + this.filename + ", " + this.pidgin + ", " + this.game + ", " + this.elo + ")";
     }
+
+    public long getId() { return this.id; }
 }

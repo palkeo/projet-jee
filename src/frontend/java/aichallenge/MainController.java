@@ -40,7 +40,7 @@ public class MainController
     public String home(Model model)
     {
         model.addAttribute("games", gameRepo.findAll());
-        model.addAttribute("matchs", matchRepo.findAll(new PageRequest(1, 20, new Sort(Direction.DESC, "id"))));
+        model.addAttribute("matchs", matchRepo.findAll(new PageRequest(0, 10, new Sort(Direction.DESC, "id"))));
         return "home";
     }
 

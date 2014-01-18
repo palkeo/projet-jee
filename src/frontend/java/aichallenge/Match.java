@@ -45,4 +45,6 @@ public class Match
     {
         return "Match(" + this.ai1 + ", " + this.score1 + ", " + this.ai2 + ", " + this.score2 + ", " + this.game + ", " + this.worker + ", " + this.state + ")";
     }
+
+    public long getId() { return this.id; }
 }

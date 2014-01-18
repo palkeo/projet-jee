@@ -21,14 +21,14 @@
         <div class="accueil_colonne">
             <h2>Liste des jeux</h2>
             <ul th:each="game: ${games}">
-                <li><a href="#" th:text="${game.name}">name</a></li>
+                <li><a th:href="@{/games/} + ${game.Id}" th:text="${game.name}">name</a></li>
             </ul>
         </div>
 
         <div class="accueil_colonne">
             <h2>Derniers matchs</h2>
             <ul th:each="match: ${matchs}">
-                <li><a href="#" th:text="${match}">match</a></li>
+                <li><a th:href="@{/matchs/} + ${match.Id}" th:text="${match}">match</a></li>
             </ul>
         </div>
 
