@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta th:substituteby="layout :: charset" />
+    <meta th:substituteby="layout :: viewport" />
+    <link th:substituteby="layout :: stylesheet" />
+    <title>Inscription</title>
+  </head>
+  <body>
+    <div th:include="layout :: header"></div>
+
+    <div id="grid"><div id="content">
+      <div th:substituteby="layout :: error_messages"></div>
+      <div th:substituteby="layout :: success_messages"></div>
+
+      <form action="#" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+        <label for="game">Jeu</label><select name="game">
+          <option th:each="g : ${games}" th:value="${g.id}" th:text="${g.name}"/>
+        </select>
+        <label for="file">Fichier</label><input type="file" name="file"/><br/>
+        <input type="submit" value="Valider" />
+      </form>
+    </div></div>
+
+    <div th:include="layout :: footer"></div>
+  </body>
+</html>
+
