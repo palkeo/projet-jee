@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -17,6 +18,7 @@ public class AI
 
     private String filename;
 
+    @Column(columnDefinition="TEXT")
     private String description;
 
     @ManyToOne
@@ -34,4 +36,10 @@ public class AI
     }
 
     public long getId() { return this.id; }
+    public String getName() { return this.name; }
+    public String getFilename() { return this.filename; }
+    public String getDescription() { return this.description; }
+    public Pidgin getPidgin() { return this.pidgin; }
+    public Game getGame() { return this.game; }
+    public int getElo() { return this.elo; }
 }

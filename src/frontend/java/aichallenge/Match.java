@@ -59,4 +59,6 @@ public class Match
     public Game getGame() { return this.game; }
     public String getWorker() { return this.worker; }
     public String getError() { return this.error; }
+    public AI getAi1() { return this.ai1; }
+    public AI getAi2() { return this.ai2; }
 }
