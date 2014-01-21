@@ -21,7 +21,7 @@
             <th>Description</th>
           </tr>
           <tr th:each="game: ${games}">
-            <td th:text="${game.name}">name</td>
+            <td><a th:text="${game.name}" th:href="@{/games/} + ${game.id}">name</a></td>
             <td th:text="${game.description}">description</td>
           </tr>
         </table>

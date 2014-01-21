@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Column;
+import javax.persistence.OrderBy;
 import java.util.Set;
 
 @Entity
@@ -25,7 +26,12 @@ public class Game
     private String jsReplayer;
 
     @OneToMany(mappedBy="game")
+    @OrderBy("elo DESC")
     private Set<AI> AIs;
+
+    @OneToMany(mappedBy="game")
+    @OrderBy("creationDate DESC")
+    private Set<Match> matches;
 
     @Override
     public String toString()
@@ -39,6 +45,7 @@ public class Game
     public String getClassName() { return this.className; }
     public String getJsReplayer() { return this.jsReplayer; }
     public Set<AI> getAIs() { return AIs; }
+    public Set<Match> getMatches() { return matches; }
 
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }

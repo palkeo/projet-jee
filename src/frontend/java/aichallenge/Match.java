@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.Date;
 import javax.persistence.OrderBy;
 
 @Entity
@@ -33,6 +34,7 @@ public class Match
 
     private String worker;
     private String error;
+    private Date creationDate;
 
     public enum State
     {
@@ -63,4 +65,5 @@ public class Match
     public AI getAi2() { return this.ai2; }
     public int getScore1() { return this.score1; }
     public int getScore2() { return this.score2; }
+    public Date getCreationDate() { return this.creationDate; }
 }

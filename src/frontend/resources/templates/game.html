@@ -15,16 +15,40 @@
         <div th:substituteby="layout :: error_messages"></div>
         <div th:substituteby="layout :: success_messages"></div>
 
-        <h2>Le jeu</h2>
+        <h2 th:text="${game.name}"/>
 
-        <p th:text="${game}">game</p>
+        <p th:text="${game.description}"/>
 
-        <h2>Les IA</h2>
+        <h2>Classement des IA</h2>
 
-        <ul th:each="ai: ${game.AIs}">
-            <li th:text="${ai}">ai</li>
+        <table>
+          <tr>
+            <th>Nom</th>
+            <th>Utilisateur</th>
+            <th>Description</th>
+            <th>Point</th>
+          </tr>
+          <tr th:each="ai: ${game.AIs}">
+            <td th:text="${ai.name}"/>
+            <td th:text="${ai.pidgin.login}"/>
+            <td th:text="${ai.description}"/>
+            <td th:text="${ai.elo}"/>
+          </tr>
+        </table>
+
+        <h2>Matches</h2>
+
+        <ul th:each="match: ${game.matches}">
+          <li>
+            <a th:href="@{/matchs/} + ${match.id}">
+              <strong th:if="${match.score1} &gt; ${match.score2}" th:text="${match.ai1.name}"/>
+              <span th:unless="${match.score1} &gt; ${match.score2}" th:text="${match.ai1.name}"/>
+              vs
+              <strong th:if="${match.score1} &lt; ${match.score2}" th:text="${match.ai2.name}"/>
+              <span th:unless="${match.score1} &lt; ${match.score2}" th:text="${match.ai2.name}"/>
+            </a>
+          </li>
         </ul>
-
       </div>
     </div>
 
