@@ -30,6 +30,15 @@ public class GameController
     @Autowired
     private GameRepository repo;
 
+    @Autowired
+    private PidginInfo pidginInfo;
+
+    @ModelAttribute("currentUser")
+    public Pidgin getUser()
+    {
+        return pidginInfo.getCurrentUser();
+    }
+
     @RequestMapping("/games/list")
     public String gamesList(Model model)
     {
