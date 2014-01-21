@@ -4,15 +4,19 @@ function display()
     data = turns[turn];
     $("#game").empty();
     columns = data.length;
-    lines = Math.max.apply(null, $.map(data, function(i) {return i.length}));
 
-    for(var i = lines - 1; !(i < 0); i--)
+    for(var i = 6-1; !(i < 0); i--)
     {
         var tr = $('<tr>');
         for(var j = 0; j < columns; j++)
         {
-            var td = $('<td width="14.28%">');
-            td.html((i < data[j].length) ? data[j][i] : '');
+            var td = $('<td width="14.28%" style="text-align:center">');
+
+            if(i < data[j].length)
+                td.html(data[j][i] == 1 ? 'X' : 'O');
+            else
+                td.html('&nbsp;');
+
             tr.append(td);
         }
         $("#game").append(tr);
