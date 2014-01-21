@@ -61,4 +61,6 @@ public class Match
     public String getError() { return this.error; }
     public AI getAi1() { return this.ai1; }
     public AI getAi2() { return this.ai2; }
+    public int getScore1() { return this.score1; }
+    public int getScore2() { return this.score2; }
 }
