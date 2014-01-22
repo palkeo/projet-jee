@@ -13,7 +13,7 @@ public class TicTacToe extends AbstractGameEngine implements GameEngine {
 
     int winner = -1;
 
-    int[] cases = new int[size*size];
+    int[] cases;
 
     public TicTacToe() {
         this(3);
@@ -22,6 +22,7 @@ public class TicTacToe extends AbstractGameEngine implements GameEngine {
     public TicTacToe(int size) {
         super(2);
         this.size = size;
+        cases = new int[size*size];
         for(int i = 0; i < size*size; ++i) {
             cases[i] = -1;
         }
@@ -52,10 +53,10 @@ public class TicTacToe extends AbstractGameEngine implements GameEngine {
 
         Point point = getPoint(move);
         int xy = point.x*size + point.y;
-        if(0 <= point.x && point.x < 3 && 0 <= point.y && point.y < 3 && cases.get(xy)) {
+        if(0 <= point.x && point.x < 3 && 0 <= point.y && point.y < 3 && cases[xy] != -1) {
             cases[xy] = getCurrentPlayer();
 
-            if(hasWon(x, y)) {
+            if(hasWon(point.x, point.y)) {
                 winner = player;
                 return true;
             }
@@ -65,7 +66,7 @@ public class TicTacToe extends AbstractGameEngine implements GameEngine {
         }
         else {
             throw new InvalidMoveException(
-                "Cannot play at [" + x + ", " + y + "]."
+                "Cannot play at [" + point.x + ", " + point.y + "]."
             );
         }
     }
@@ -130,7 +131,7 @@ public class TicTacToe extends AbstractGameEngine implements GameEngine {
         if(move.isArray()
         && jsonX != null && jsonY != null
         && jsonX.isInt() && jsonY.isInt()) {
-            return new Point(jsonX.getInt(), jsonY.getInt());
+            return new Point(jsonX.asInt(), jsonY.asInt());
         }
         else {
             throw new InvalidMoveException(
@@ -138,10 +139,9 @@ public class TicTacToe extends AbstractGameEngine implements GameEngine {
             );
         }
     }
-
-    private class Point {
-        public int x, y;
-        public Point(int x, int y) { this.x=x; this.y=y; }
-    }
 }
 
+class Point {
+    public int x, y;
+    public Point(int x, int y) { this.x=x; this.y=y; }
+}
