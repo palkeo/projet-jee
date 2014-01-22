@@ -10,9 +10,10 @@
     <div th:include="layout :: header"></div>
 
     <div id="grid"><div id="content">
-        <div th:substituteby="layout :: error_messages"></div>
-        <div th:substituteby="layout :: success_messages"></div>
+      <div th:substituteby="layout :: error_messages"></div>
+      <div th:substituteby="layout :: success_messages"></div>
 
+      L'archive doit être au format tgz, peser moins de <span th:text="${maxUploadSize}"/> octets et contenir un script <em>launch</em> qui lance le jeu.
       <form action="#" th:action="@{/games/upload}" method="post" enctype="multipart/form-data">
         <label for="game">Jeu</label><select name="game">
           <option th:each="g : ${games}" th:value="${g.id}" th:text="${g.name}"/>
