@@ -21,12 +21,14 @@
             <th>Prénom</th>
             <th>Nom</th>
             <th>Rôle</th>
+            <th>Nombre d'IAs</th>
           </tr>
           <tr th:each="user: ${users}">
             <td th:text="${user.login}">toto</td>
             <td th:text="${user.firstName}">Toto</td>
             <td th:text="${user.lastName}">Dupond</td>
             <td th:text="${user.isAdmin()}? 'Admin': 'Utilisateur'">true</td>
+            <td th:text="${pidginInfo.getNbAI(user.id)}">12</td>
           </tr>
         </table>
 

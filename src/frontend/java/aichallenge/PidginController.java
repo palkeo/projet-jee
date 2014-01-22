@@ -32,6 +32,9 @@ public class PidginController
     @Autowired
     private PidginInfo pidginInfo;
 
+    @ModelAttribute("pidginInfo")
+    public PidginInfo getPidginInfo(){ return pidginInfo; }
+
     @ModelAttribute("currentUser")
     public Pidgin getUser()
     {
