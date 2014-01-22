@@ -41,10 +41,10 @@ public class UploadController
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public String invalidSize(MaxUploadSizeExceededException e)
     {
-        return "redirect:/games/upload";
+        return "redirect:/ai/upload";
     }
 
-    @RequestMapping(value="/games/upload", method=RequestMethod.GET)
+    @RequestMapping(value="/ai/upload", method=RequestMethod.GET)
     public String getUpload(
         Model model,
         RedirectAttributes redirectAttributes)
@@ -63,7 +63,7 @@ public class UploadController
         }
     }
 
-    @RequestMapping(value="/games/upload", method=RequestMethod.POST)
+    @RequestMapping(value="/ai/upload", method=RequestMethod.POST)
     public String postUpload(
         @RequestParam("file") MultipartFile file,
         @RequestParam("game") String game,
@@ -85,7 +85,7 @@ public class UploadController
             errorMessages.add("Une erreur est survenue. Peut-être qu'en réessayant vous aurez plus de chance. Ou pas.");
             redirectAttributes.addFlashAttribute("errorMessages", errorMessages);
 
-            return "redirect:/games/upload";
+            return "redirect:/ai/upload";
         }
 
         ArrayList<String> successMessages = new ArrayList<String>();
