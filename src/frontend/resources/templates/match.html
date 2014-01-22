@@ -17,7 +17,19 @@
         <div th:substituteby="layout :: error_messages"></div>
         <div th:substituteby="layout :: success_messages"></div>
 
-        <p th:text="${match}">...</p>
+        <h2 th:text="${match.game.name} + ' - ' + ${match.ai1.name} + ' vs ' + ${match.ai2.name}"/>
+        <p>
+            Etat:
+                <strong th:if="${match.state} == ${T(aichallenge.Match$State).NOT_STARTED}">En attente</strong>
+                <strong th:if="${match.state} == ${T(aichallenge.Match$State).STARTED}">En cours</strong>
+                <strong th:if="${match.state} == ${T(aichallenge.Match$State).FINISHED}">Terminé</strong>
+            <span th:if="${match.state} != ${T(aichallenge.Match$State).NOT_STARTED}"><br/>Worker : <strong th:text="${match.worker}"/></span>
+            <span th:if="${match.state} == ${T(aichallenge.Match$State).FINISHED}">
+                <br/><span th:text="${match.ai1.name}" /> : <strong th:text="${match.score1}" />
+                <br/><span th:text="${match.ai2.name}" /> : <strong th:text="${match.score2}" />
+            </span>
+            <br/><span th:if="${match.state} == ${T(aichallenge.Match$State).FINISHED} and ${match.error}">Erreur : <strong th:text="${match.error}" /></span>
+        </p>
 
         <script th:text="${javascript}" type="text/javascript">var turns = [];</script>
         <script type="text/javascript" th:src="'/js/games/' + ${match.game.jsReplayer}"></script>
@@ -25,9 +37,8 @@
         <table id="game"></table>
 
         <p>
-        <a href="javascript:previous();">previous</a> | <a href="javascript:next();">next</a>
+            <a href="javascript:previous();">previous</a> | <a href="javascript:next();">next</a>
         </p>
-
 
       </div>
     </div>
