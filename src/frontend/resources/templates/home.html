@@ -27,9 +27,9 @@
 
         <div class="accueil_colonne">
             <h2>Derniers matchs</h2>
-            <ul th:each="match: ${matchs}">
+            <ul th:each="match: ${matches}">
                 <li>
-                    <a th:href="@{/matchs/} + ${match.id}">
+                    <a th:href="@{/matches/} + ${match.id}">
                         <span th:text="${match.game.name}"/>
                         -
                         <strong th:if="${match.score1} &gt; ${match.score2}" th:text="${match.ai1.name}"/>

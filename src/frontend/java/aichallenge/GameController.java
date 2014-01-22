@@ -83,7 +83,7 @@ public class GameController
         Match m = new Match(game, ai1, ai2, new java.util.Date());
         m = matchRepo.save(m);
 
-        successMessages.add("Votre demande de match a été correctement enregistrée. Elle sera traitée dès qu'un de nos esclaves sera libre. Vous pouvez voir le statut de votre match <a href=\"/matchs/" + m.getId() + "\">ici</a>.");
+        successMessages.add("Votre demande de match a été correctement enregistrée. Elle sera traitée dès qu'un de nos esclaves sera libre. Vous pouvez voir le statut de votre match <a href=\"/matches/" + m.getId() + "\">ici</a>.");
 
         model.addAttribute("successMessages", successMessages);
 
