@@ -29,6 +29,14 @@ public class MatchController
 {
     @Autowired
     private MatchRepository repo;
+    @Autowired
+    private PidginInfo pidginInfo;
+
+    @ModelAttribute("currentUser")
+    public Pidgin getUser()
+    {
+        return pidginInfo.getCurrentUser();
+    }
 
     @RequestMapping("/matchs/list")
     public String matchsList(Model model)
