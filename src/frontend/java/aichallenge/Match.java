@@ -58,6 +58,7 @@ public class Match
         this.ai1 = ai1;
         this.ai2 = ai2;
         this.creationDate = creationDate;
+        this.state = State.NOT_STARTED;
     }
 
     @Override
