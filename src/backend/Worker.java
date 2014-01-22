@@ -148,7 +148,7 @@ public class Worker
                     return;
 
                 // launch AIs
-                if(!launch(ais[0]) || !launch(ais[1]))
+                if(!launch(ais[0], 0) || !launch(ais[1], 1))
                     return;
 
                 // generate match
@@ -247,7 +247,7 @@ public class Worker
         return true;
     }
 
-    private boolean launch(AI ai)
+    private boolean launch(AI ai, int player)
     {
         String aiDirectory = config.getExtractDirectory() + FilenameUtils.removeExtension(FilenameUtils.removeExtension(ai.getFilename()));
         File aiDirectoryFile = new File(aiDirectory);
@@ -269,7 +269,7 @@ public class Worker
         }
 
         // launch it
-        ProcessBuilder pb = new ProcessBuilder("bash", launch.getAbsolutePath(), "localhost", String.valueOf(config.getGameServerPort()));
+        ProcessBuilder pb = new ProcessBuilder("bash", launch.getAbsolutePath(), "localhost", String.valueOf(config.getGameServerPort()), String.valueOf(player));
         pb.directory(launch.getParentFile());
 
         try
