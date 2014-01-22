@@ -57,6 +57,7 @@ public class UploadController
             return "redirect:/inscription";
         }
         else {
+            model.addAttribute("maxUploadSize", Application.maxUploadSize);
             model.addAttribute("games", gameRepo.findAll());
             return "upload";
         }
@@ -70,13 +71,11 @@ public class UploadController
         RedirectAttributes redirectAttributes)
     {
         //TODO: check whether the archive is correct and do something with it :)
-        String targetDirectory = "./src/user_scripts/" + getUser().getLogin();
-        String targetFile = file.getName();
+        String targetDirectory = "./src/user_scripts/";
+        String targetFile = getUser().getLogin() + "-" + file.getName();
         String target = targetDirectory + "/" + targetFile;
 
         try {
-            new File(targetDirectory).mkdir();
-
             file.transferTo(new File(target));
         }
         catch(IOException | IllegalStateException e) {
