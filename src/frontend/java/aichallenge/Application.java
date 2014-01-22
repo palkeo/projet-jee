@@ -28,10 +28,12 @@ import org.springframework.web.multipart.MultipartResolver;
 @EnableJpaRepositories
 public class Application
 {
+    public static final int maxUploadSize = 500000 /* bytes */;
+
     @Bean
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        multipartResolver.setMaxUploadSize(500000 /* bytes */);
+        multipartResolver.setMaxUploadSize(maxUploadSize);
         return multipartResolver;
     }
 

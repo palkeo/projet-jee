@@ -36,7 +36,7 @@ public class Match
     private String error;
     private Date creationDate;
 
-    public enum State
+    public static enum State
     {
         NOT_STARTED,
         STARTED,
@@ -66,4 +66,5 @@ public class Match
     public int getScore1() { return this.score1; }
     public int getScore2() { return this.score2; }
     public Date getCreationDate() { return this.creationDate; }
+    public State getState() { return this.state; }
 }
