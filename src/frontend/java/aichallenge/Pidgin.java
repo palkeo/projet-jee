@@ -44,6 +44,7 @@ public class Pidgin
         return "Pidgin(" + this.login + ", " + this.encryptedPassword + ", " + this.firstName + ", " + this.lastName + ", " + (this.admin? "admin": "normal pidgin") + ")";
     }
 
+    public long getId(){ return this.id; }
     public String getLogin(){ return this.login; }
     public String getEncryptedPassword(){ return this.encryptedPassword; }
     public String getFirstName(){ return this.firstName; }
