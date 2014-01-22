@@ -1,5 +1,10 @@
 package aichallenge;
 
+import java.lang.IllegalStateException;
+import java.io.IOException;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,13 +37,12 @@ public class UploadController
         return pidginInfo.getCurrentUser();
     }
 
-    /*TODO
+    // TODO
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public String invalidSize(MaxUploadSizeExceededException e)
     {
         return "redirect:/games/upload";
     }
-    */
 
     @RequestMapping(value="/games/upload", method=RequestMethod.GET)
     public String getUpload(
@@ -48,7 +52,7 @@ public class UploadController
         if(getUser() == null) {
             ArrayList<String> errorMessages = new ArrayList<String>();
             errorMessages.add("Vous devez être connecté pour uploader un fichier.\nSi vous n'êtes pas inscrit, vous pouvez le faire ci-dessous.");
-            redirectAttributes.addFlashAttribute("error_messages", errorMessages);
+            redirectAttributes.addFlashAttribute("errorMessages", errorMessages);
 
             return "redirect:/inscription";
         }
@@ -65,7 +69,31 @@ public class UploadController
         Model model,
         RedirectAttributes redirectAttributes)
     {
-        return "redirect:/home";
+        //TODO: check whether the archive is correct and do something with it :)
+        String targetDirectory = "./src/user_scripts/" + getUser().getLogin();
+        String targetFile = file.getName();
+        String target = targetDirectory + "/" + targetFile;
+
+        try {
+            new File(targetDirectory).mkdir();
+
+            file.transferTo(new File(target));
+        }
+        catch(IOException | IllegalStateException e) {
+            e.printStackTrace();
+
+            ArrayList<String> errorMessages = new ArrayList<String>();
+            errorMessages.add("Une erreur est survenue. Peut-être qu'en réessayant vous aurez plus de chance. Ou pas.");
+            redirectAttributes.addFlashAttribute("errorMessages", errorMessages);
+
+            return "redirect:/games/upload";
+        }
+
+        ArrayList<String> successMessages = new ArrayList<String>();
+        successMessages.add("Bien reçu.");
+        redirectAttributes.addFlashAttribute("successMessages", successMessages);
+
+        return "redirect:/";
     }
 }
 
