@@ -29,6 +29,18 @@ public class AI
 
     private int elo;
 
+    private AI(){}
+
+    public AI(String name, String filename, String description, Pidgin pidgin, Game game)
+    {
+        this.name = name;
+        this.filename = filename;
+        this.description = description;
+        this.pidgin = pidgin;
+        this.game = game;
+        this.elo = 1000; // this is not a random value
+    }
+
     @Override
     public String toString()
     {
