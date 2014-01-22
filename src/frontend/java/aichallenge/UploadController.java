@@ -30,6 +30,8 @@ public class UploadController
 
     @Autowired
     private GameRepository gameRepo;
+    @Autowired
+    private AIRepository aiRepo;
 
     @ModelAttribute("currentUser")
     public Pidgin getUser()
@@ -66,7 +68,9 @@ public class UploadController
     @RequestMapping(value="/ai/upload", method=RequestMethod.POST)
     public String postUpload(
         @RequestParam("file") MultipartFile file,
-        @RequestParam("game") String game,
+        @RequestParam("game") long gameId,
+        @RequestParam("name") String name,
+        @RequestParam("description") String description,
         Model model,
         RedirectAttributes redirectAttributes)
     {
@@ -88,11 +92,13 @@ public class UploadController
             return "redirect:/ai/upload";
         }
 
+        AI ai = new AI(name, target, description, pidginInfo.getCurrentUser(), gameRepo.findById(gameId));
+        ai = aiRepo.save(ai);
+
         ArrayList<String> successMessages = new ArrayList<String>();
-        successMessages.add("Bien reçu.");
+        successMessages.add("Votre IA a été uploadée correctement. Vous pouvez désormais voir ses propriétés <a href=\"/ai/" + ai.getId() + "\">ici</a>.");
         redirectAttributes.addFlashAttribute("successMessages", successMessages);
 
         return "redirect:/";
     }
 }
-

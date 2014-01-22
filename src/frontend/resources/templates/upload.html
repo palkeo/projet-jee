@@ -16,8 +16,12 @@
 
       L'archive doit être au format tgz, peser moins de <span th:text="${maxUploadSize}"/> octets et contenir un script <em>launch</em> qui lance le jeu.
       <form action="#" th:action="@{/ai/upload}" method="post" enctype="multipart/form-data">
+        <label for="name">Petit nom de l'IA</label>
+        <input type="text" name="name" />
+        <label for="description">Comment décririez-vous votre IA ?</label>
+        <input type="text" name="description" />
         <label for="game">Jeu</label><select name="game">
-          <option th:each="g : ${games}" th:value="${g.id}" th:text="${g.name}"/>
+          <option th:each="g : ${games}" th:value="${g.id}" name="gameId" th:text="${g.name}"/>
         </select>
         <label for="filebtn">Fichier</label>
         <input type="button" value="Choisir un fichier" name="filebtn" onclick="getFile();"/><br/>
@@ -29,4 +33,3 @@
     <div th:include="layout :: footer"></div>
   </body>
 </html>
-
