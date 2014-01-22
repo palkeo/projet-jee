@@ -28,8 +28,9 @@ import java.util.List;
 public class GameController
 {
     @Autowired
-    private GameRepository repo;
-
+    private GameRepository gameRepo;
+    @Autowired
+    private AIRepository aiRepo;
     @Autowired
     private PidginInfo pidginInfo;
 
@@ -42,14 +43,22 @@ public class GameController
     @RequestMapping("/games/list")
     public String gamesList(Model model)
     {
-        model.addAttribute("games", repo.findAll());
+        model.addAttribute("games", gameRepo.findAll());
         return "gamesList";
     }
 
-    @RequestMapping("/games/{id}")
-    public String gameDisplay(@PathVariable Long id, Model model)
+    @RequestMapping("/games/{gameId}")
+    public String gameDisplay(@PathVariable Long gameId, Model model)
     {
-        model.addAttribute("game", repo.findById(id));
+        model.addAttribute("game", gameRepo.findById(gameId));
+
+        if(pidginInfo.getCurrentUser() != null)
+        {
+            long userId = pidginInfo.getCurrentUser().getId();
+            model.addAttribute("allAI", aiRepo.findByGameId(gameId));
+            model.addAttribute("userAI", aiRepo.findByGameIdAndPidginId(gameId, userId));
+        }
+
         return "game";
     }
 
