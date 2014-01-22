@@ -69,7 +69,7 @@ public class MainController
         {
             pidginInfo.setCurrentUser(user);
             //todo:messages:successMessages.add(messageSource.getMessage("connected", null, null));
-            successMessages.add("Vous êtes maintenant connectés.");
+            successMessages.add("Vous êtes maintenant connecté.");
         }
 
         redirectAttributes.addFlashAttribute("errorMessages", errorMessages);
