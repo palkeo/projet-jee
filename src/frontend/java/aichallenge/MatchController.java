@@ -38,15 +38,15 @@ public class MatchController
         return pidginInfo.getCurrentUser();
     }
 
-    @RequestMapping("/matchs/list")
-    public String matchsList(Model model)
+    @RequestMapping("/matches/list")
+    public String matchesList(Model model)
     {
-        model.addAttribute("matchs", repo.findAll());
+        model.addAttribute("matches", repo.findAll());
 
-        return "matchsList";
+        return "matchesList";
     }
 
-    @RequestMapping("/matchs/{id}")
+    @RequestMapping("/matches/{id}")
     public String matchDisplay(@PathVariable Long id, Model model)
     {
         Match match = repo.findById(id);
@@ -64,5 +64,4 @@ public class MatchController
 
         return "match";
     }
-
 }

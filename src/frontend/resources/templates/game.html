@@ -54,7 +54,7 @@
 
         <ul th:each="match: ${game.matches}">
           <li>
-            <a th:href="@{/matchs/} + ${match.id}">
+            <a th:href="@{/matches/} + ${match.id}">
               <strong th:if="${match.score1} &gt; ${match.score2}" th:text="${match.ai1.name}"/>
               <span th:unless="${match.score1} &gt; ${match.score2}" th:text="${match.ai1.name}"/>
               vs
