@@ -39,12 +39,12 @@
     </div>
 
     <div class="error_messages" th:fragment="error_messages">
-      <div class="error_message" th:each="errorMessage: ${errorMessages}" th:text="${errorMessage}">
+      <div class="error_message" th:each="errorMessage: ${errorMessages}" th:utext="${errorMessage}">
       </div>
     </div>
 
     <div class="success_messages" th:fragment="success_messages">
-      <div class="success_message" th:each="successMessage: ${successMessages}" th:text="${successMessage}">
+      <div class="success_message" th:each="successMessage: ${successMessages}" th:utext="${successMessage}">
       </div>
     </div>
 
