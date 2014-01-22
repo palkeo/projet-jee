@@ -21,6 +21,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 @EnableAutoConfiguration
 @Configuration
@@ -91,5 +92,13 @@ public class Application
     public static void main(String[] args)
     {
         SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public CharacterEncodingFilter characterEncodingFilter() {
+        final CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+        return characterEncodingFilter;
     }
 }
