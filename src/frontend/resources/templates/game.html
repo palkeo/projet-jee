@@ -46,6 +46,7 @@
               vs
               <strong th:if="${match.score1} &lt; ${match.score2}" th:text="${match.ai2.name}"/>
               <span th:unless="${match.score1} &lt; ${match.score2}" th:text="${match.ai2.name}"/>
+              <em th:if="${match.state} != ${T(aichallenge.Match$State).FINISHED}">[En cours]</em>
             </a>
           </li>
         </ul>
