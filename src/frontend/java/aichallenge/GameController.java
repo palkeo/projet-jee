@@ -20,6 +20,9 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
+import javax.jms.*;
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,8 +83,27 @@ public class GameController
 
         ArrayList<String> successMessages = new ArrayList<String>();
 
+        // save in database
         Match m = new Match(game, ai1, ai2, new java.util.Date());
         m = matchRepo.save(m);
+
+        // add jms message queue
+        try
+        {
+            ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_BROKER_URL);
+            QueueConnection connection = factory.createQueueConnection();
+            connection.start();
+            QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+            Queue queue = session.createQueue("Matches");
+            QueueSender sender = session.createSender(queue);
+
+            sender.send(session.createTextMessage("" + m.getId()));
+            connection.close();
+        }
+        catch(JMSException e)
+        {
+            throw new RuntimeException(e); //TODO: something better
+        }
 
         successMessages.add("Votre demande de match a été correctement enregistrée. Elle sera traitée dès qu'un de nos esclaves sera libre. Vous pouvez voir le statut de votre match <a href=\"/matches/" + m.getId() + "\">ici</a>.");
 
