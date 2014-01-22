@@ -28,7 +28,11 @@ import java.util.List;
 public class GameController
 {
     @Autowired
-    private GameRepository repo;
+    private GameRepository gameRepo;
+    @Autowired
+    private AIRepository aiRepo;
+    @Autowired
+    MatchRepository matchRepo;
 
     @Autowired
     private PidginInfo pidginInfo;
@@ -42,15 +46,54 @@ public class GameController
     @RequestMapping("/games/list")
     public String gamesList(Model model)
     {
-        model.addAttribute("games", repo.findAll());
+        model.addAttribute("games", gameRepo.findAll());
         return "gamesList";
     }
 
-    @RequestMapping("/games/{id}")
-    public String gameDisplay(@PathVariable Long id, Model model)
+    @RequestMapping(value="/games/{gameId}", method=RequestMethod.GET)
+    public String gameDisplay(@PathVariable Long gameId, Model model)
     {
-        model.addAttribute("game", repo.findById(id));
+        model.addAttribute("game", gameRepo.findById(gameId));
+
+        if(pidginInfo.getCurrentUser() != null)
+        {
+            long userId = pidginInfo.getCurrentUser().getId();
+            model.addAttribute("allAI", aiRepo.findByGameId(gameId));
+            model.addAttribute("userAI", aiRepo.findByGameIdAndPidginId(gameId, userId));
+        }
+
         return "game";
     }
 
+    @RequestMapping(value="/games/{gameId}", method=RequestMethod.POST)
+    public String gameDisplay(
+        @PathVariable Long gameId,
+        Model model,
+        @RequestParam("ai1") long ai1Id,
+        @RequestParam("ai2") long ai2Id)
+    {
+        Game game = gameRepo.findById(gameId);
+        AI ai1 = aiRepo.findById(ai1Id);
+        AI ai2 = aiRepo.findById(ai2Id);;
+
+        model.addAttribute("game", game);
+
+        ArrayList<String> successMessages = new ArrayList<String>();
+
+        Match m = new Match(game, ai1, ai2, new java.util.Date());
+        m = matchRepo.save(m);
+
+        successMessages.add("Votre demande de match a été correctement enregistrée. Elle sera traitée dès qu'un de nos esclaves sera libre. Vous pouvez voir le statut de votre match <a href=\"/matchs/" + m.getId() + "\">ici</a>.");
+
+        model.addAttribute("successMessages", successMessages);
+
+        if(pidginInfo.getCurrentUser() != null)
+        {
+            long userId = pidginInfo.getCurrentUser().getId();
+            model.addAttribute("allAI", aiRepo.findByGameId(gameId));
+            model.addAttribute("userAI", aiRepo.findByGameIdAndPidginId(gameId, userId));
+        }
+
+        return "game";
+    }
 }

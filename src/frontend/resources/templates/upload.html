@@ -8,17 +8,20 @@
   </head>
   <body>
     <div th:include="layout :: header"></div>
+    <script type="text/javascript" src="/js/upload.js"></script>
 
     <div id="grid"><div id="content">
       <div th:substituteby="layout :: error_messages"></div>
       <div th:substituteby="layout :: success_messages"></div>
 
       L'archive doit être au format tgz, peser moins de <span th:text="${maxUploadSize}"/> octets et contenir un script <em>launch</em> qui lance le jeu.
-      <form action="#" th:action="@{/games/upload}" method="post" enctype="multipart/form-data">
+      <form action="#" th:action="@{/ai/upload}" method="post" enctype="multipart/form-data">
         <label for="game">Jeu</label><select name="game">
           <option th:each="g : ${games}" th:value="${g.id}" th:text="${g.name}"/>
         </select>
-        <label for="file">Fichier</label><input type="file" name="file"/><br/>
+        <label for="filebtn">Fichier</label>
+        <input type="button" value="Choisir un fichier" name="filebtn" onclick="getFile();"/><br/>
+        <input type="file" id="hiddenUpload" style="display: none" name="file"/><br/>
         <input type="submit" value="Valider" />
       </form>
     </div></div>

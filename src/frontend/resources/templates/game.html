@@ -19,6 +19,20 @@
 
         <p th:text="${game.description}"/>
 
+        <div id="launchMatch" th:if="${currentUser}">
+          <form method="post">
+            Choisissez l'une de vos IA...
+            <select name="ai1">
+              <option th:each="ai: ${userAI}" th:value="${ai.id}" th:text="${ai.name} + (${ai.description}? ' - ' + ${ai.description} : '')">DummyAI</option>
+            </select>
+            ... Puis sélectionnez son adversaire !
+            <select name="ai2">
+              <option th:each="ai: ${allAI}" th:value="${ai.id}" th:text="'(' + ${ai.pidgin.login} + ') ' + ${ai.name} + (${ai.description}? ' - ' + ${ai.description} : '')">DummyAIBis</option>
+            </select>
+            <input type="submit" value="Challenge !" />
+          </form>
+        </div>
+
         <h2>Classement des IA</h2>
 
         <table>

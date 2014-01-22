@@ -50,6 +50,16 @@ public class Match
     @OrderBy("turn ASC")
     private List<Turn> turns;
 
+    private Match(){}
+
+    public Match(Game game, AI ai1, AI ai2, Date creationDate)
+    {
+        this.game = game;
+        this.ai1 = ai1;
+        this.ai2 = ai2;
+        this.creationDate = creationDate;
+    }
+
     @Override
     public String toString()
     {
