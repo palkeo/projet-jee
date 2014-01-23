@@ -7,29 +7,27 @@
     <title>Liste des jeux</title>
   </head>
   <body>
-
     <div th:include="layout :: header"></div>
 
     <div id="grid"><div id="content">
+      <div th:substituteby="layout :: error_messages"></div>
+      <div th:substituteby="layout :: success_messages"></div>
 
-        <div th:substituteby="layout :: error_messages"></div>
-        <div th:substituteby="layout :: success_messages"></div>
+      <a th:href="@{/matches/list}">Voir la liste des matches</a>
 
-        <table>
-          <tr>
-            <th>Nom du jeu</th>
-            <th>Description</th>
-          </tr>
-          <tr th:each="game: ${games}">
-            <td><a th:text="${game.name}" th:href="@{/games/} + ${game.id}">name</a></td>
-            <td th:text="${game.description}">description</td>
-          </tr>
-        </table>
+      <table>
+        <tr>
+          <th>Nom du jeu</th>
+          <th>Description</th>
+        </tr>
+        <tr th:each="game: ${games}">
+          <td><a th:text="${game.name}" th:href="@{/games/} + ${game.id}"/></td>
+          <td th:text="${game.description}"/>
+        </tr>
+      </table>
 
-      </div>
-    </div>
+    </div></div>
 
     <div th:include="layout :: footer"></div>
-
   </body>
 </html>

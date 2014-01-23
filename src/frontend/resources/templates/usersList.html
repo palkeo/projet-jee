@@ -11,9 +11,8 @@
     <div th:include="layout :: header"></div>
 
     <div id="grid"><div id="content">
-
-        <div th:substituteby="layout :: error_messages"></div>
-        <div th:substituteby="layout :: success_messages"></div>
+        <div th:substituteby="layout :: error_messages"/>
+        <div th:substituteby="layout :: success_messages"/>
 
         <table>
           <tr>
@@ -24,18 +23,18 @@
             <th>Nombre d'IAs</th>
           </tr>
           <tr th:each="user: ${users}">
-            <td th:text="${user.login}">toto</td>
-            <td th:text="${user.firstName}">Toto</td>
-            <td th:text="${user.lastName}">Dupond</td>
-            <td th:text="${user.isAdmin()}? 'Admin': 'Utilisateur'">true</td>
-            <td th:text="${pidginInfo.getNbAI(user.id)}">12</td>
+            <td th:text="${user.login}"/>
+            <td th:text="${user.firstName}"/>
+            <td th:text="${user.lastName}"/>
+            <td th:text="${user.isAdmin()}? 'Admin': 'Utilisateur'"/>
+            <td th:text="${pidginInfo.getNbAI(user.id)}"/>
           </tr>
         </table>
 
       </div>
     </div>
 
-    <div th:include="layout :: footer"></div>
+    <div th:include="layout :: footer"/>
 
   </body>
 </html>
