@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta th:substituteby="layout :: charset" />
+    <meta th:substituteby="layout :: viewport" />
+    <link th:substituteby="layout :: stylesheet" />
+    <title>Liste de vos AI</title>
+  </head>
+  <body>
+
+    <div th:include="layout :: header"></div>
+
+    <div id="grid"><div id="content">
+      <div th:substituteby="layout :: error_messages"></div>
+      <div th:substituteby="layout :: success_messages"></div>
+
+      <ul th:each="listForGame: ${perGame}">
+        <li><a th:text="${listForGame.key.name + '&nbsp;:'}" th:href="${'/games/' + listForGame.key.id}"/>
+          <ul>
+            <li th:each="ai: ${listForGame.value}" th:text="${ai.name + ', ' + ai.elo + ' points elo'}"/>
+          </ul>
+        </li>
+      </ul>
+    </div></div>
+
+    <div th:include="layout :: footer"/>
+  </body>
+</html>
