@@ -15,10 +15,10 @@ function display()
 
             switch(data[i][j]) {
                 case 0:
-                    td.html('X');
+                    td.html('O');
                     break;
                 case 1:
-                    td.html('O');
+                    td.html('X');
                     break;
                 default:
                     td.html('&nbsp;');
