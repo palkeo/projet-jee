@@ -31,6 +31,7 @@
                 <li class="first"><a href="/"><img src="/home.png" alt="" />Accueil</a></li>
                 <li><a href="/games/list"><img src="/games.png" />Jeux</a></li>
                 <li th:if="${currentUser}"><a href="/ai/upload"><img src="/games.png" />Upload</a></li>
+                <li th:if="${currentUser}"><a href="/user/ais"><img src="/games.png" />Mes AIs</a></li>
                 <li><a href="/users/list"><img src="/pidgins.png" />Pidgins</a></li>
                 <li class="last"><a href="http://tinyurl.com/kebabb"><img src="/forbidden.png" />Page secrète</a></li>
             </ul>

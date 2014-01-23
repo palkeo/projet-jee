@@ -1,6 +1,7 @@
 package aichallenge;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,12 @@ public class PidginController
 {
     @Autowired
     private PidginRepository repo;
-
     @Autowired
     private PidginInfo pidginInfo;
+    @Autowired
+    private GameRepository gameRepo;
+    @Autowired
+    private AIRepository aiRepo;
 
     @ModelAttribute("pidginInfo")
     public PidginInfo getPidginInfo(){ return pidginInfo; }
@@ -88,7 +92,43 @@ public class PidginController
         }
     }
 
-    // FIXME: There is a CSRF here. Fix only if you are time, it's not important at all for such a project...
+    @RequestMapping(value="/user/ais", method=RequestMethod.GET)
+    public String inscriptionResult(
+        Model model,
+        RedirectAttributes redirectAttributes)
+    {
+        Pidgin user = getUser();
+
+        ArrayList<String> errorMessages = new ArrayList<String>();
+
+        if(user != null) {
+            HashMap<Game, List<AI>> perGame = new HashMap<Game, List<AI>>();
+
+            for(Game game : gameRepo.findAll()) {
+                List<AI> ais = aiRepo.findByGameIdAndPidginId(game.getId(), user.getId());
+
+                if(!ais.isEmpty()) {
+                    perGame.put(game, ais);
+                }
+            }
+
+            if(perGame.isEmpty()) {
+                errorMessages.add("Vous n'avez aucune AI.");
+            }
+
+            model.addAttribute("perGame", perGame);
+            model.addAttribute("errorMessages", errorMessages);
+
+            return "userAIList";
+        }
+        else {
+            errorMessages.add("Vous devez être connectés pour accéder à cette page.");
+            redirectAttributes.addFlashAttribute("errorMessages", errorMessages);
+            return "redirect:/";
+        }
+    }
+
+    // FIXME: There is a CSRF here. Fix only if you have time, it's not important at all for such a project...
     @RequestMapping("/logout")
     public String logout(
         Model model,
