@@ -16,7 +16,7 @@ public class TicTacToe extends AbstractGameEngine implements GameEngine {
     int[] cases;
 
     public TicTacToe() {
-        this(3);
+        this(5);
     }
 
     public TicTacToe(int size) {
@@ -53,8 +53,8 @@ public class TicTacToe extends AbstractGameEngine implements GameEngine {
 
         Point point = getPoint(move);
         int xy = point.x*size + point.y;
-        if(0 <= point.x && point.x < 3 && 0 <= point.y && point.y < 3 && cases[xy] != -1) {
-            cases[xy] = getCurrentPlayer();
+        if(0 <= point.x && point.x < size && 0 <= point.y && point.y < size && cases[xy] == -1) {
+            cases[xy] = player;
 
             if(hasWon(point.x, point.y)) {
                 winner = player;
