@@ -64,4 +64,13 @@ public class MatchController
 
         return "match";
     }
+
+    @RequestMapping("/matches/pending")
+    public String pendingMatches(Model model)
+    {
+        List<Match> pendingMatches = repo.findByStateNotOrderByCreationDateDesc(Match.State.FINISHED);
+        model.addAttribute("pendingMatches", pendingMatches);
+
+        return "pendingMatches";
+    }
 }

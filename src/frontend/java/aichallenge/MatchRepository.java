@@ -10,4 +10,5 @@ public interface MatchRepository extends PagingAndSortingRepository<Match, Long>
 {
     Page<Match> findAll(Pageable pageable);
     Match findById(Long id);
+    List<Match> findByStateNotOrderByCreationDateDesc(Match.State state);
 }

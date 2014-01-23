@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta th:substituteby="layout :: charset" />
+    <meta th:substituteby="layout :: viewport" />
+    <link th:substituteby="layout :: stylesheet" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <title>Matchs en attente</title>
+  </head>
+  <body>
+
+    <div th:include="layout :: header"></div>
+
+    <div id="grid"><div id="content">
+
+        <div th:substituteby="layout :: error_messages"></div>
+        <div th:substituteby="layout :: success_messages"></div>
+
+        <table>
+          <tr>
+            <th>Jeu</th>
+            <th>IA1</th>
+            <th>IA2</th>
+            <th>Worker</th>
+          </tr>
+          <tr th:each="match: ${pendingMatches}">
+            <td th:text="${match.game.name}"></td>
+            <td th:text="${match.ai1.name}"></td>
+            <td th:text="${match.ai2.name}"></td>
+            <td th:text="${match.worker}? ${match.worker} : 'En attente'"></td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+
+    <div th:include="layout :: footer"></div>
+
+  </body>
+</html>
