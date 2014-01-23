@@ -11,8 +11,8 @@
     <script type="text/javascript" src="/js/upload.js"></script>
 
     <div id="grid"><div id="content">
-      <div th:substituteby="layout :: error_messages"></div>
-      <div th:substituteby="layout :: success_messages"></div>
+      <div th:substituteby="layout :: error_messages"/>
+      <div th:substituteby="layout :: success_messages"/>
 
       L'archive doit être au format tgz, peser moins de <span th:text="${maxUploadSize}"/> octets et contenir un script <em>launch</em> qui lance le jeu.
       <form action="#" th:action="@{/ai/upload}" method="post" enctype="multipart/form-data">

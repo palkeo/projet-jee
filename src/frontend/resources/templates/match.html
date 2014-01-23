@@ -13,13 +13,12 @@
     <div th:include="layout :: header"></div>
 
     <div id="grid"><div id="content">
-
-        <div th:substituteby="layout :: error_messages"></div>
-        <div th:substituteby="layout :: success_messages"></div>
+        <div th:substituteby="layout :: error_messages"/>
+        <div th:substituteby="layout :: success_messages"/>
 
         <h2 th:text="${match.game.name} + ' - ' + ${match.ai1.name} + ' vs ' + ${match.ai2.name}"/>
         <p>
-            Etat:
+            État:
                 <strong th:if="${match.state} == ${T(aichallenge.Match$State).NOT_STARTED}">En attente</strong>
                 <strong th:if="${match.state} == ${T(aichallenge.Match$State).STARTED}">En cours</strong>
                 <strong th:if="${match.state} == ${T(aichallenge.Match$State).FINISHED}">Terminé</strong>

@@ -162,7 +162,11 @@ public class Worker
                 }
 
                 // save results
-                log.info(String.format("AI %s won", ais[result.getWinner()].getName()));
+                if(result.getWinner() == -1)
+                    log.info(String.format("Draw"));
+                else
+                    log.info(String.format("AI %s won", ais[result.getWinner()].getName()));
+
                 saveResult(gameEngine, result, matchId);
                 saveElo(result.getWinner(), ais);
             }
@@ -327,7 +331,10 @@ public class Worker
 
                 if(gameEngine.play(move))
                 {
-                    winner = gameEngine.getScore(0) > gameEngine.getScore(1) ? 0 : 1;
+                    if(gameEngine.getScore(0) == gameEngine.getScore(1))
+                        winner = -1; // no winner
+                    else
+                        winner = gameEngine.getScore(0) > gameEngine.getScore(1) ? 0 : 1;
                 }
                 saveTurn(matchId, gameEngine.getCurrentTurn(), gameEngine.getState());
             }
@@ -373,7 +380,7 @@ public class Worker
             int nbMatches = count.getInt(1);
 
             // calculate elo point
-            int score = winner == i ? 1 : 0;
+            double score = (winner == -1) ? 0.5 : ((winner == i) ? 1.0 : 0.0);
             int elo = ais[i].getElo();
             int k = 10;
 
@@ -383,7 +390,7 @@ public class Worker
                 k = 15;
 
             double p = 1.0 / (1.0 + Math.pow(10, - (double)d / 400.0));
-            elo += (int)((double)k * ((double)score - p));
+            elo += (int)((double)k * (score - p));
             d = -d;
 
             // update db
