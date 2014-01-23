@@ -1,4 +1,5 @@
 var size = 5;
+var width = 100/size;
 var turn = 0;
 function display()
 {
@@ -10,18 +11,17 @@ function display()
         var tr = $('<tr>');
         for(var j = 0; j < size; j++)
         {
-            var td = $('<td style="text-align:center">');
+            var td = $('<td width="' + width + '%" style="text-align:center">');
 
-            switch(data[i*size+j]) {
-                case -1:
-                    td.html('&nbsp;');
-                    break;
+            switch(data[i][j]) {
                 case 0:
                     td.html('X');
                     break;
                 case 1:
-                    td.html('X');
+                    td.html('O');
                     break;
+                default:
+                    td.html('&nbsp;');
             }
 
             tr.append(td);
