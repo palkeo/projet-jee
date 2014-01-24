@@ -7,31 +7,28 @@
     <title>Liste des matchs</title>
   </head>
   <body>
-
     <div th:include="layout :: header"></div>
 
     <div id="grid"><div id="content">
+      <div th:substituteby="layout :: error_messages"></div>
+      <div th:substituteby="layout :: success_messages"></div>
+      <a th:href="@{/matches/pending}">Voir la liste des matches en cours</a>
 
-        <div th:substituteby="layout :: error_messages"></div>
-        <div th:substituteby="layout :: success_messages"></div>
+      <table>
+        <tr>
+          <th>Jeu</th>
+          <th>IA1 (Utilisateur - <em>score ELO</em>)</th>
+          <th>IA2 (Utilisateur - <em>score ELO</em>)</th>
+        </tr>
+        <tr th:each="match: ${matches}">
+          <td th:text="${match.game.name}">toto</td>
+          <td th:class="${match.score1} > ${match.score2} ? 'winner' : 'looser'" th:utext="${match.ai1.name + ' (' + match.ai1.pidgin.login + ' - &lt;em&gt;' + match.ai1.elo + '&lt;/em&gt;)'}">Toto</td>
+          <td th:class="${match.score2} > ${match.score1} ? 'winner' : 'looser'" th:utext="${match.ai2.name + ' (' + match.ai2.pidgin.login + ' - &lt;em&gt;' + match.ai2.elo + '&lt;/em&gt;)'}">Toto</td>
+        </tr>
+      </table>
 
-        <table>
-          <tr>
-            <th>Jeu</th>
-            <th>IA1 (Utilisateur - <em>score ELO</em>)</th>
-            <th>IA2 (Utilisateur - <em>score ELO</em>)</th>
-          </tr>
-          <tr th:each="match: ${matches}">
-            <td th:text="${match.game.name}">toto</td>
-            <td th:class="${match.score1} > ${match.score2} ? 'winner' : 'looser'" th:utext="${match.ai1.name + ' (' + match.ai1.pidgin.login + ' - &lt;em&gt;' + match.ai1.elo + '&lt;/em&gt;)'}">Toto</td>
-            <td th:class="${match.score2} > ${match.score1} ? 'winner' : 'looser'" th:utext="${match.ai2.name + ' (' + match.ai2.pidgin.login + ' - &lt;em&gt;' + match.ai2.elo + '&lt;/em&gt;)'}">Toto</td>
-          </tr>
-        </table>
-
-      </div>
-    </div>
+    </div></div>
 
     <div th:include="layout :: footer"></div>
-
   </body>
 </html>
