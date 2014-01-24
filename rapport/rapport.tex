@@ -90,4 +90,29 @@
   y accéder, nous avons mis en place notre propre serveur de base de
   données, qui était censé être temporaire, et qui aura finalement
   servi de serveur de «~production~».
+
+\section{Backend : génération des matchs}
+  L'interface web permet de lancer des matchs. Lors du lancement d'un
+  match, une ligne est insérée dans la table «~match~» de la base de
+  donnée, et un message contentant l'ID du match est ajouté dans la
+  queue JMS.
+
+  \paragraph{}
+  Des «~workers~» jouent le rôle de producteur de cette queue. Ils
+  attendent un message, récupèrent les informations relatives au match
+  dans la base de donnée, puis génèrent le match. Pour cela, ils décompressent
+  les archives des joueurs (placées dans un dossier qui serait par exemple partagé
+  via NFS), et lancent le script bash $launch$ à la racine.
+
+  \paragraph{}
+  Nous avons utilisé le principe du classement Elo
+  \footnote{\url{https://fr.wikipedia.org/wiki/Classement\_Elo}} provenant
+  des échecs. Le principe est simple : un joueur part avec $1000$ points Elo.
+  S'il gagne contre quelqu'un, ses points augmenteront en fonction de son
+  score Elo et celui de son adversaire. Par exemple, un match entre le
+  premier et le dernier ne changera pratiquement pas les scores Elo.
+
+\section{Problématique de sécurité}
+  % TODO: palkeo
+
 \end{document}
