@@ -70,7 +70,7 @@
   Java EE sans une seule ligne de XML $\backslash o/$).
 
   \paragraph{}
-  Afin de représenter les vues, nous n'avons pas choisi les vues
+  Afin de représenter les vues, nous n'avons pas choisi les templates JSP
   mais un système de templates nommé Thymeleaf. Bien que ce dernier
   ne soit certainement pas le meilleur qui soit (notamment parce
   qu'il préfère faire des includes à tout va plutôt que de faire de
@@ -91,11 +91,16 @@
   queue JMS.
 
   \paragraph{}
-  Des «~workers~» jouent le rôle de consommateur de cette queue. Ils
+  Des «~workers~» jouent le rôle de consommateurs de cette queue. Ils
   attendent un message, récupèrent les informations relatives au match
   dans la base de donnée, puis lancent le match. Pour cela, ils décompressent
   les archives des joueurs (placées dans un dossier qui serait par exemple partagé
   via NFS), et lancent le script bash $launch$ à la racine.
+
+  Cette architecture permettrait donc de traîter énormément de matchs en parallèle,
+  même si les matchs mettent du temps à s'exécuter. Le traitement des matchs peut
+  s'effectuer sur autant de machines physiques que l'on souhaite: c'est une solution
+  qui passe extrêmement bien à l'échelle.
 
   \paragraph{}
   Nous avons utilisé le principe du classement Elo
