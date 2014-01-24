@@ -101,7 +101,7 @@
   les archives des joueurs (placées dans un dossier qui serait par exemple partagé
   via NFS), et lancent le script bash $launch$ à la racine.
 
-  Cette architecture permettrait donc de traîter énormément de matchs en parallèle,
+  Cette architecture permettrait donc de traiter énormément de matchs en parallèle,
   même si les matchs mettent du temps à s'exécuter. Le traitement des matchs peut
   s'effectuer sur autant de machines physiques que l'on souhaite: c'est une solution
   qui passe extrêmement bien à l'échelle.
@@ -123,10 +123,14 @@
   Pour y remédier, on pourrait lancer chaque script joueur avec un UID/GID Unix qui lui est propre,
   ainsi qu'avec un démon surveillant la consommation mémoire/CPU du script. Ainsi, il n'aurait un accès
   limité au système et ne pourrait pas le saturer. Couplé à de bonnes règles \verb+ulimit+ et à un \verb+iptables+ bien
-  configuré pour interdire l'accès au réseau à ces programes (via le module \verb+owner+), on devrait atteindre une
+  configuré pour interdire l'accès au réseau à ces programmes (via le module \verb+owner+), on devrait atteindre une
   bonne sécurité.
 
   Il est aussi possible de virtualiser toute l'exécution, ou de la faire dans des sandbox LXC. On peut aussi regarder du
-  côté de Google Native Client...
+  côté de Google Native Client\ldots
 
+\section{Conclusion}
+  Ce projet nous a permis de découvrir Java EE plus en profondeur, mais ne nous
+  a vraiment pas donné envie de continuer à l'utiliser plus tard, au vue des
+  autres technologies que nous connaissions déjà (python, django).
 \end{document}
