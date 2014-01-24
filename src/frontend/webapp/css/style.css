@@ -594,7 +594,7 @@ thead {
   text-align: left;
   font-weight: bold;
 }
-tbody tr:nth-child(even) td {
+tbody tr:nth-child(even) td:not(.winner,.looser) {
   background: #dddddd;
 }
 tfoot {
