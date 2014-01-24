@@ -79,6 +79,10 @@
   auparavant, étant plutôt habitués au système de templates de Django
   (un autre framework Web en Python).
 
+  Le HTML de base est du HTML5, couplé à du CSS3. Le design a été
+  entièrement fait main, et n'utilise pas de framework de type
+  bootstrap ou autre.
+
   \paragraph{}
   Concernant le choix du DBMS, notre choix s'est porté sur
   PostgreSQL, car l'un d'entre nous avait déjà un serveur configuré à
@@ -112,6 +116,17 @@
   si le dernier gagne, on pourra observer de grandes variations dans leurs scores.
 
 \section{Problématique de sécurité}
-  % TODO: palkeo
+  Actuellement, aucune vérification de sécurité n'est effectuée sur les workers, et
+  il est donc possible de faire n'importe quoi dessus.
+  C'est une piste importante d'amélioration.
+
+  Pour y remédier, on pourrait lancer chaque script joueur avec un UID/GID Unix qui lui est propre,
+  ainsi qu'avec un démon surveillant la consommation mémoire/CPU du script. Ainsi, il n'aurait un accès
+  limité au système et ne pourrait pas le saturer. Couplé à de bonnes règles \verb+ulimit+ et à un \verb+iptables+ bien
+  configuré pour interdire l'accès au réseau à ces programes (via le module \verb+owner+), on devrait atteindre une
+  bonne sécurité.
+
+  Il est aussi possible de virtualiser toute l'exécution, ou de la faire dans des sandbox LXC. On peut aussi regarder du
+  côté de Google Native Client...
 
 \end{document}
