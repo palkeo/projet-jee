@@ -39,7 +39,7 @@ public class UploadController
         return pidginInfo.getCurrentUser();
     }
 
-    // TODO
+    // TODO: does not work
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public String invalidSize(MaxUploadSizeExceededException e)
     {
@@ -74,7 +74,7 @@ public class UploadController
         Model model,
         RedirectAttributes redirectAttributes)
     {
-        //TODO: check whether the archive is correct and do something with it :)
+        // TODO: maybe check whether the archive is correct to repport to the user
         String targetDirectory = "./archives";
         String targetFile = getUser().getLogin() + "-" + file.getOriginalFilename();
         String target = targetDirectory + "/" + targetFile;

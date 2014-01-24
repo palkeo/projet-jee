@@ -57,18 +57,15 @@ public class MainController
         Pidgin user = pidginRepo.findByLogin(login);
         if(user == null)
         {
-            //todo:messages:errorMessages.add(messageSource.getMessage("unknown.user", new Object[]{login}, null));
             errorMessages.add("Utilisateur inconnu " + login + ".");
         }
         else if(!Pidgin.md5(password).equals(user.getEncryptedPassword()))
         {
-            //todo:messages:errorMessages.add(messageSource.getMessage("incorrect.password", null, null));
             errorMessages.add("Mot de passe incorrect.");
         }
         else
         {
             pidginInfo.setCurrentUser(user);
-            //todo:messages:successMessages.add(messageSource.getMessage("connected", null, null));
             successMessages.add("Vous êtes maintenant connecté.");
         }
 
