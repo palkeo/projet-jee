@@ -40,22 +40,20 @@
   Dès le début du projet, nous avions décidé d'utiliser quelque chose
   de plus évolué que ce qui nous a été présenté en cours. Notre choix
   s'est donc naturellement porté vers Spring. Toutefois, en surfant
-  sur le World Wild Wed, nous avons trouvé un projet
-  tout neuf qui nous a semblé particulièrement intéressant: Spring
+  sur le World Wild Wed, nous avons trouvé un projet tout neuf qui
+  nous a semblé particulièrement intéressant: Spring
   Boot\footnote{\url{https://github.com/spring-projects/spring-boot}}.
 
   Spring Boot est une surcouche de Spring, dont la philosophie est
   \emph{convention over configuration}. Cette approche convenait
   parfaitement à nos besoins, car nous n'avions aucune envie de
-  configurer toutes les couches d'un projet JEE une par une. Ainsi,
-  en une dizaine de minutes, il nous a été possible d'avoir une page
-  web affichant des données d'une base de données. Un autre grand
-  avantage de Spring Boot est qu'il permet de compiler toute
+  configurer toutes les couches d'un projet JEE une par une. Un autre
+  grand avantage de Spring Boot est qu'il permet de compiler toute
   l'application, ainsi qu'un serveur Tomcat, JPA et une base de
-  données H2 (si besoin) en un seul fichier war, qu'il nous suffit
-  de lancer avec Java pour avoir un serveur Web complet.
+  données H2 (si besoin) en un seul fichier war, qu'il nous suffit de
+  lancer avec Java pour avoir un serveur Web complet.
 
-  Le principal inconvénient de cette approche est qu'il n'étais
+  Le principal inconvénient de cette approche est qu'il n'était
   souvent pas trivial de modifier la configuration par défaut,
   d'autant plus que ce projet est encore jeune: le peu de
   documentation disponible était réparti entre plusieurs sites (leur
@@ -66,12 +64,10 @@
 
   \paragraph{}
   Afin de gérer toutes nos dépendances, nous avons décidé d'utiliser
-  Gradle, qui est une alternative à Maven. Bien qu'il soit également
-  plus difficile de trouver de la documentation pour Gradle que pour
-  Maven (car il est moins connu), ce choix nous a semblé le
+  Gradle, qui est une alternative à Maven. Ce choix nous a semblé le
   meilleur, car la syntaxe du fichier de configuration est bien plus
-  user-friendly (nous avons réussi à faire un site Web fonctionnel
-  en Java EE sans une seule ligne de XML).
+  user-friendly (nous avons réussi à faire un site Web fonctionnel en
+  Java EE sans une seule ligne de XML $\backslash o/$).
 
   \paragraph{}
   Afin de représenter les vues, nous n'avons pas choisi les vues
@@ -85,9 +81,6 @@
 
   \paragraph{}
   Concernant le choix du DBMS, notre choix s'est porté sur
-  PostgreSQL, car à l'origine, il était prévu que soit mise à notre
-  disposition une base de données sur un serveur de l'n7. Ne pouvant
-  y accéder, nous avons mis en place notre propre serveur de base de
-  données, qui était censé être temporaire, et qui aura finalement
-  servi de serveur de «~production~».
+  PostgreSQL, car l'un d'entre nous avait déjà un serveur configuré à
+  disposition sur un serveur personnel.
 \end{document}
