@@ -91,9 +91,9 @@
   queue JMS.
 
   \paragraph{}
-  Des «~workers~» jouent le rôle de producteur de cette queue. Ils
+  Des «~workers~» jouent le rôle de consommateur de cette queue. Ils
   attendent un message, récupèrent les informations relatives au match
-  dans la base de donnée, puis génèrent le match. Pour cela, ils décompressent
+  dans la base de donnée, puis lancent le match. Pour cela, ils décompressent
   les archives des joueurs (placées dans un dossier qui serait par exemple partagé
   via NFS), et lancent le script bash $launch$ à la racine.
 
