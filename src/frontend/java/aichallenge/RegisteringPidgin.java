@@ -25,11 +25,11 @@ public class RegisteringPidgin {
     public String getFirstName()    { return this.firstName; }
     public String getLastName()     { return this.lastName; }
 
-    public void setLogin(String login)           { this.login = login; }
-    public void setPassword(String password)     { this.password = password; }
-    public void setConfirmation(String password) { this.confirmation = confirmation; }
-    public void setFirstName(String firstName)   { this.firstName = firstName; }
-    public void setLastName(String lastName)     { this.lastName = lastName; }
+    public void setLogin(String login)               { this.login = login; }
+    public void setPassword(String password)         { this.password = password; }
+    public void setConfirmation(String confirmation) { this.confirmation = confirmation; }
+    public void setFirstName(String firstName)       { this.firstName = firstName; }
+    public void setLastName(String lastName)         { this.lastName = lastName; }
 
     public Pidgin toPidgin() {
         return new Pidgin(login, password, firstName, lastName, false);
