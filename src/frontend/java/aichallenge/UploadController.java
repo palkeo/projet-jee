@@ -75,8 +75,8 @@ public class UploadController
         RedirectAttributes redirectAttributes)
     {
         //TODO: check whether the archive is correct and do something with it :)
-        String targetDirectory = "./src/user_scripts/";
-        String targetFile = getUser().getLogin() + "-" + file.getName();
+        String targetDirectory = "./archives";
+        String targetFile = getUser().getLogin() + "-" + file.getOriginalFilename();
         String target = targetDirectory + "/" + targetFile;
 
         try {
@@ -92,7 +92,7 @@ public class UploadController
             return "redirect:/ai/upload";
         }
 
-        AI ai = new AI(name, target, description, pidginInfo.getCurrentUser(), gameRepo.findById(gameId));
+        AI ai = new AI(name, targetFile, description, pidginInfo.getCurrentUser(), gameRepo.findById(gameId));
         ai = aiRepo.save(ai);
 
         ArrayList<String> successMessages = new ArrayList<String>();
